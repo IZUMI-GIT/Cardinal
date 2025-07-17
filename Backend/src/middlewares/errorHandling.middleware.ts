@@ -8,11 +8,8 @@ type ErrorType = {
 export const errorHandler = (err : ErrorType, req : Request, res : Response, next : NextFunction) => {
     
     let statusCode = !err.status ? 500 : err.status;
-    let message = !err.message ? 'An unexpected error occured' : err.message;
+    let message = !err.message ? '<h1>An unexpected error occured</h1>' : err.message;
     
-    res.status(statusCode).json({
-        status : statusCode,
-        message : message
-    })
+    res.status(statusCode).send(message)
     
 }
