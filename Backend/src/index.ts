@@ -1,10 +1,20 @@
 import express from 'express';
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 import boardRouter from './routes/boardRoutes';
 import { errorHandler } from './middlewares/errorHandling.middleware';
+import authRouter from './routes/authRoutes';
 const app = express();
 const port = 3000;
 
+app.use(express.json())
+app.use(cookieParser())
+app.use(cors({
+    credentials : true,
+    origin : "http://localhost:5173"
+}))
 
+app.use('/v1', authRouter)
 app.use('/v1/board', boardRouter)
 
 app.use(errorHandler);
