@@ -1,5 +1,6 @@
 import * as z from "zod";
 import bcrypt from "bcryptjs";
+import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 interface SignUp {
@@ -50,9 +51,14 @@ export const signupService = async (details : SignUp)  => {
                     }
                 })
 
+                const jwToken = jwt.sign({
+                    email : newUser.email,
+                    role : newUser.role,
+                    id : newUser.id
+                },SECRET_KEY)
                 
             }catch(e){
-
+                return {status: 500, message : "Internal Error"}
             }
         }
     }
