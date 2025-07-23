@@ -2,6 +2,8 @@ import * as z from "zod";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+dotenv.config();
 const prisma = new PrismaClient();
 interface SignUp {
     name: string,
@@ -9,6 +11,8 @@ interface SignUp {
     password: string,
     username: string
 }
+
+const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET;
 
 export const signupService = async (details : SignUp)  => {
     const emailCheck = await prisma.user.findUnique({
@@ -55,7 +59,15 @@ export const signupService = async (details : SignUp)  => {
                     email : newUser.email,
                     role : newUser.role,
                     id : newUser.id
-                },SECRET_KEY)
+                }, SECRET_KEY as string, {
+                    expiresIn: '15m'})
+
+                return {
+                    status: 201,
+                    message: "User created successfully",
+                    token : jwToken,
+                    user: newUser
+                }
                 
             }catch(e){
                 return {status: 500, message : "Internal Error"}
