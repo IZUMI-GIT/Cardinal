@@ -13,6 +13,7 @@ interface SignUp {
 }
 
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 export const signupService = async (details : SignUp)  => {
     const emailCheck = await prisma.user.findUnique({
@@ -59,13 +60,21 @@ export const signupService = async (details : SignUp)  => {
                     email : newUser.email,
                     role : newUser.role,
                     id : newUser.id
-                }, SECRET_KEY as string, {
-                    expiresIn: '15m'})
+                    }, SECRET_KEY as string
+                )
+
+                const refreshToken = jwt.sign({
+                    email : newUser.email,
+                    role : newUser.role,
+                    id : newUser.id
+                    }, REFRESH_TOKEN_SECRET as string
+                )
 
                 return {
                     status: 201,
                     message: "User created successfully",
-                    token : jwToken,
+                    access_token : jwToken,
+                    refresh_token : refreshToken,
                     user: newUser
                 }
                 

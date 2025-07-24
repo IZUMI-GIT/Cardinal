@@ -19,5 +19,33 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
 
     const signupResponse = await signupService(details);
 
-    
+    if(signupResponse.status === 201){
+
+        // Assuming the token and user are returned in the response
+        const { access_token, refresh_token, status, message, user } = signupResponse;
+        // Set the token in the response header
+        res.cookie('accessToken', access_token, {
+            sameSite: 'lax',
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production,
+            maxAge : 15*60*1000    //15 minutes
+        })
+
+        res.cookie('refreshToken', refresh_token, {
+            sameSite: 'lax',
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge : 7*24*60*60*1000    //7 days
+        } )
+
+        return res.status(201).json({
+            message,
+            access_token,
+            user
+        })
+    }else{
+        return res.status(signupResponse.status).json({
+            message : signupResponse.message
+        })
+    }
 }
