@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { signupService } from "../services/auth.service";
+import { AppError } from "../utils/AppError";
 
 export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -44,8 +45,10 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
             user
         })
     }else{
-        return res.status(signupResponse.status).json({
-            message : signupResponse.message
-        })
+        // return res.status(signupResponse.status).json({
+        //     message : signupResponse.message
+        // })
+
+        return next(new AppError(signupResponse.message, signupResponse.status))
     }
 }
