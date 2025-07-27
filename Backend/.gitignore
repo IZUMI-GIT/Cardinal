@@ -2,12 +2,9 @@
 node_modules/
 
 # env variables
-.env
-.env.*     # like .env.local, .env.development
+# .env
+# .env.*     # like .env.local, .env.development
 
-# Prisma engine + generated client
-prisma/generated/
-prisma/migrations/
 
 # build artifacts
 dist/
