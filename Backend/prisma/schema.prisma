@@ -24,7 +24,7 @@ model User {
   profile Profile?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  session Session[]
+  sessions Session[]
 }
 
 model Profile{
@@ -47,7 +47,7 @@ model Board {
   deletedAt DateTime?
 
   @@unique([userId, title])
-  @@index([userId])
+  @@index([userId, position])
 }
 
 model Column {
@@ -60,7 +60,7 @@ model Column {
   deletedAt DateTime?
 
   @@unique([boardId, title])
-  @@index([boardId])
+  @@index([boardId, position])
 }
 
 model Card {
@@ -72,7 +72,8 @@ model Card {
   updatedAt DateTime @updatedAt
   position Int
   deletedAt DateTime?
-  @@index([columnId])
+  
+  @@index([columnId, position])
 }
 
 model Session {
