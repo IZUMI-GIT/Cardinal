@@ -24,6 +24,7 @@ model User {
   profile Profile?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  session Session[]
 }
 
 model Profile{
@@ -36,41 +37,54 @@ model Profile{
 
 model Board {
   id Int @id @default(autoincrement())
-  title String @unique
+  title String 
   user User @relation(fields: [userId], references: [id])
   userId Int
   columns Column[]
-  position Int @unique @default(autoincrement())
+  position Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@unique([userId, title])
+  @@index([userId])
 }
 
 model Column {
   id Int @id @default(autoincrement())
-  title String @unique
+  title String
   board Board @relation(fields: [boardId], references: [id])
   boardId Int
-  position Int @unique @default(autoincrement())
+  position Int
   cards Card[]
+  deletedAt DateTime?
+
+  @@unique([boardId, title])
+  @@index([boardId])
 }
 
 model Card {
   id Int @id @default(autoincrement())
   content String
-  column Column @relation(fields: [cardId], references: [id])
-  cardId Int
+  column Column @relation(fields: [columnId], references: [id])
+  columnId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   position Int
+  deletedAt DateTime?
+  @@index([columnId])
 }
 
 model Session {
-  id Int @default(autoincrement())
+  id Int @id @default(autoincrement())
   userId Int
+  user User @relation(fields: [userId], references: [id])
   refreshToken String @unique
   createdAt DateTime @default(now())
   userAgent String
+  ipAddress String?
   valid Boolean @default(true)
+  deletedAt DateTime?
 }
 
 enum Role {
