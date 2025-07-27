@@ -16,17 +16,8 @@ const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 export const signupService = async (details : SignUp)  => {
-    const emailCheck = await prisma.user.findUnique({
-        where : {
-            email : details.email
-        }
-    })
 
-    if(emailCheck){
-        return {status : 409, message : "user already exists"}
-    }
-    else{
-        const signupSchema = z.object({
+     const signupSchema = z.object({
         email : z.email(),
         password : z.string().min(6),
         name : z.string(),
@@ -42,6 +33,17 @@ export const signupService = async (details : SignUp)  => {
 
         if(!result.success){
             return {status : 401, message : "enter details correctly"}
+        }
+    else{
+
+        const emailCheck = await prisma.user.findUnique({
+            where : {
+                email : details.email
+            }
+        })
+
+        if(emailCheck){
+            return {status : 409, message : "user already exists"}
         }else{
             try{
                 const salt = bcrypt.genSaltSync(10);

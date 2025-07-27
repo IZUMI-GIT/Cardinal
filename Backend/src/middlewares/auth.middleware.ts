@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { signupService } from "../services/auth.service";
+import { signupService } from "../services/signUp.service";
 import { AppError } from "../utils/AppError";
 
 export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
@@ -39,7 +39,7 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
             maxAge : 7*24*60*60*1000    //7 days
         } )
 
-        return res.status(201).json({
+        return res.status(status).json({
             message,
             access_token,
             user

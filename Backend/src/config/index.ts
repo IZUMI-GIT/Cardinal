@@ -1,9 +1,9 @@
 import express from 'express';
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-import boardRouter from './routes/boardRoutes';
-import { errorHandler } from './middlewares/errorHandling.middleware';
-import authRouter from './routes/authRoutes';
+import boardRouter from '../routes/board.routes';
+import { errorHandler } from '../middlewares/errorHandling.middleware';
+import authRouter from '../routes/auth.routes';
 const app = express();
 const port = 3000;
 
