@@ -17,6 +17,10 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 export const signupService = async (details : SignUp)  => {
 
+    if(!SECRET_KEY || !REFRESH_TOKEN_SECRET){
+        return {status: 401, message: "Keys corrupted"}
+    }
+
      const signupSchema = z.object({
         email : z.email(),
         password : z.string().min(6),
@@ -32,7 +36,7 @@ export const signupService = async (details : SignUp)  => {
         });
 
         if(!result.success){
-            return {status : 401, message : "enter details correctly"}
+            return {status : 400, message : "enter details correctly"}
         }
     else{
 
