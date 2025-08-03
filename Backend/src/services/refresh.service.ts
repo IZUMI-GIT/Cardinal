@@ -1,12 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import dotenv from "dotenv";
 import jwt, {JwtPayload} from "jsonwebtoken";
+import { config } from "../config/config";
 
-dotenv.config();
 const prisma = new PrismaClient();
 
-const SECRET_KEY = process.env.SECRET_KEY;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const SECRET_KEY = config.SECRET_KEY;
+const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET
 
 export const refreshService = async (token : string) => {
 

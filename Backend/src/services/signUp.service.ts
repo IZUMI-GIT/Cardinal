@@ -1,9 +1,10 @@
 import * as z from "zod";
 import bcrypt from "bcryptjs";
-// import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
-import dotenv from "dotenv";
-dotenv.config();
+import { config } from "../config/config";
+// import dotenv from "dotenv";
+// dotenv.config();
 const prisma = new PrismaClient();
 interface SignUp {
     name: string,
@@ -12,14 +13,10 @@ interface SignUp {
     username: string
 }
 
-const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const SECRET_KEY = config.SECRET_KEY;
+const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET; 
 
 export const signupService = async (details : SignUp)  => {
-
-    if(!SECRET_KEY || !REFRESH_TOKEN_SECRET){
-        return {status: 401, message: "Keys corrupted"}
-    }
 
     const signupSchema = z.object({
         email : z.email(),
@@ -66,6 +63,8 @@ export const signupService = async (details : SignUp)  => {
                     message: "user created successfully",
                     newUser
                 }
+
+                //JWT token assignment in SignIn controller/service file
 
                 // const jwToken = jwt.sign({
                 //     email : newUser.email,

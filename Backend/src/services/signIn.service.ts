@@ -2,12 +2,11 @@ import { PrismaClient } from "@prisma/client";
 import * as z from "zod";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import { config } from "../config/config";
 const prisma = new PrismaClient();
-dotenv.config();
 
-const SECRET_KEY = process.env.SECRET_KEY;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const SECRET_KEY = config.SECRET_KEY;
+const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET;
 
 interface SignIn {
     email: string,
@@ -15,10 +14,6 @@ interface SignIn {
 }
 
 export const signInService = async ({email, password}: SignIn) => {
-
-    if(!SECRET_KEY || !REFRESH_TOKEN_SECRET){
-        return {status: 401, message: "Keys corrupted"}
-    }
 
     const loginSchema = z.object({
         email: z.string(),
