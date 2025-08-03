@@ -1,54 +1,28 @@
 import { NextFunction, Request, Response } from "express";
-import { signupService } from "../services/signUp.service";
+import { config } from "../config/config";
 import { AppError } from "../utils/AppError";
+import jwt from "jsonwebtoken";
 
-export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
+const SECRET_KEY = config.SECRET_KEY;
 
-    const {name, email, password, username} : {
-        name : string,
-        email : string,
-        password : string,
-        username : string
-    } = req.body;
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
-    const details = {
-        name,
-        email,
-        password,
-        username
+    const access_token = req.cookies.access_token;
+
+    if(!access_token){
+        next(new AppError('config error', 500))
     }
 
-    const signupResponse = await signupService(details);
-
-    if(signupResponse.status === 201){
-
-        // Assuming the token and user are returned in the response
-        const { access_token, refresh_token, status, message, user } = signupResponse;
-        // Set the token in the response header
-        res.cookie('accessToken', access_token, {
-            sameSite: 'lax',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production,
-            maxAge : 15*60*1000    //15 minutes
-        })
-
-        res.cookie('refreshToken', refresh_token, {
-            sameSite: 'lax',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge : 7*24*60*60*1000    //7 days
-        } )
-
-        return res.status(status).json({
-            message,
-            access_token,
-            user
-        })
-    }else{
-        // return res.status(signupResponse.status).json({
-        //     message : signupResponse.message
-        // })
-
-        return next(new AppError(signupResponse.message, signupResponse.status))
-    }
+    jwt.verify(access_token, SECRET_KEY, (err: any, decoded: any) => {
+        if(err){
+            console.error('JWT verification failed :', err.message)
+            if(err.name === 'TokenExpiredError'){
+                console.error('Token Expired at:', err.expiredAt)
+            }
+            next(new AppError(err.message, 401))
+        }else{
+            console.log('JWT successfully verified. Decoded JWTpayload :', decoded)
+        }
+    })
+    next();
 }
