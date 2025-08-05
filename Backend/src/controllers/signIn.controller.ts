@@ -24,9 +24,11 @@ export const postSignIn = async (req: Request, res: Response, next: NextFunction
         password: string
     } = req.body;
 
+    const userAgent: string = req.headers['user-agent']!;
     const details = {
         email,
-        password
+        password,
+        userAgent
     }
 
     const signInResponse = await signInService(details);

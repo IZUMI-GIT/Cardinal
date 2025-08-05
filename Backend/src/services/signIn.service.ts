@@ -3,6 +3,7 @@ import * as z from "zod";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { config } from "../config/config";
+import {v4 as uuidv4} from 'uuid';
 const prisma = new PrismaClient();
 
 const SECRET_KEY = config.SECRET_KEY;
@@ -10,10 +11,11 @@ const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET;
 
 interface SignIn {
     email: string,
-    password: string
+    password: string,
+    userAgent: string
 }
 
-export const signInService = async ({email, password}: SignIn) => {
+export const signInService = async ({email, password, userAgent}: SignIn) => {
 
     const loginSchema = z.object({
         email: z.string(),
@@ -46,12 +48,22 @@ export const signInService = async ({email, password}: SignIn) => {
                         }, SECRET_KEY as string
                     )
 
-                    const refreshToken = jwt.sign({
-                        email,
-                        role : emailCheck.role,
-                        id : emailCheck.id
-                        }, REFRESH_TOKEN_SECRET as string
-                    )
+                    const refreshToken = uuidv4();
+
+                    const response = await prisma.session.create({
+                        data: {
+                            userId : emailCheck.id,
+                            refreshToken,
+                            userAgent
+                        }
+                    })
+
+                    // const refreshToken = jwt.sign({
+                    //     email,
+                    //     role : emailCheck.role,
+                    //     id : emailCheck.id
+                    //     }, REFRESH_TOKEN_SECRET as string
+                    // )
 
                     return {
                         status: 201,

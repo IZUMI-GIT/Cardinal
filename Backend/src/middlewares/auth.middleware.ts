@@ -11,6 +11,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
     if(!access_token){
         next(new AppError('config error', 500))
+        return
     }
 
     jwt.verify(access_token, SECRET_KEY, (err: any, decoded: any) => {
@@ -20,10 +21,12 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
                 console.error('Token Expired at:', err.expiredAt)
             }
             next(new AppError(err.message, 401))
+            return
         }else{
             console.log('JWT successfully verified. Decoded JWTpayload :', decoded)
-            req.body.userId = decoded.userId;
+            req.user = decoded;
             next();
+            return
         }
     })
 }
