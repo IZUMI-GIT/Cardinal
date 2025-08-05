@@ -7,22 +7,19 @@ const SECRET_KEY = config.SECRET_KEY;
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
-    const access_token = req.cookies.access_token;
+    try{
+        const access_token = req.cookies.access_token;
+        if(!access_token) return next(new AppError('access token missing', 401));
 
-    if(!access_token){
-        next(new AppError('config error', 500))
-    }
-
-    jwt.verify(access_token, SECRET_KEY, (err: any, decoded: any) => {
-        if(err){
-            console.error('JWT verification failed :', err.message)
-            if(err.name === 'TokenExpiredError'){
-                console.error('Token Expired at:', err.expiredAt)
-            }
-            next(new AppError(err.message, 401))
+        let decoded = jwt.verify(access_token, SECRET_KEY);
+        // req.body.id = decoded.id;
+        console.log(decoded)
+        return next();
+    } catch(err: unknown){
+        if(err instanceof Error){
+            next(new AppError(err.message, 500))
         }else{
-            console.log('JWT successfully verified. Decoded JWTpayload :', decoded)
+            next(new AppError("Unknown error occured", 500))
         }
-    })
-    next();
+    }
 }
