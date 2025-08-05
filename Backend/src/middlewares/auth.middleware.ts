@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { config } from "../config/config";
 import { AppError } from "../utils/AppError";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const SECRET_KEY = config.SECRET_KEY;
 
@@ -11,8 +11,8 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         const access_token = req.cookies.access_token;
         if(!access_token) return next(new AppError('access token missing', 401));
 
-        let decoded = jwt.verify(access_token, SECRET_KEY);
-        // req.body.id = decoded.id;
+        let decoded = jwt.verify(access_token, SECRET_KEY) as JwtPayload;
+        req.body.id = decoded.id;
         console.log(decoded)
         return next();
     } catch(err: unknown){
