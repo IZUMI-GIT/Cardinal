@@ -22,7 +22,8 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
             next(new AppError(err.message, 401))
         }else{
             console.log('JWT successfully verified. Decoded JWTpayload :', decoded)
+            req.body.userId = decoded.userId;
+            next();
         }
     })
-    next();
 }
