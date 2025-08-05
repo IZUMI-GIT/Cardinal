@@ -20,20 +20,21 @@ model User {
   name String?
   role Role @default(USER)
   userName String @unique
-  profile Profile?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   sessions Session[]
-  boards Board_User[]
+  boardusers Board_User[]
+  boards Board[]
+  Board_User Board_User[] @relation("AssignedBy")
 }
 
-model Profile{
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+// model Profile{
+//   id Int @id @default(autoincrement())
+//   user User @relation(fields: [userId], references: [id])
+//   userId Int @unique
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 
 model Board {
   id Int @id @default(autoincrement())
@@ -44,6 +45,10 @@ model Board {
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
   users Board_User[]
+  createdBy Int
+  creator User @relation(fields: [createdBy], references: [id])
+
+  @@unique([title, createdBy])
 }
 
 model Board_User {
@@ -52,7 +57,10 @@ model Board_User {
   boardId Int
   boards Board @relation(fields: [boardId], references: [id])
   assignedAt DateTime @default(now())
-  assignedBy String
+  assignedById Int
+  assignedBy User @relation("AssignedBy", fields: [assignedById], references: [id])
+  deletedAt DateTime?
+
   @@unique([userId, boardId])
 }
 
@@ -92,6 +100,7 @@ model Session {
   ipAddress String?
   valid Boolean @default(true)
   deletedAt DateTime?
+  expiredAt DateTime
 }
 
 enum Role {
