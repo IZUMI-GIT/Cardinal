@@ -58,6 +58,8 @@ export const signInService = async ({email, password, userAgent}: SignIn) => {
                         }
                     })
 
+                    console.log("uuid: ", response)
+
                     // const refreshToken = jwt.sign({
                     //     email,
                     //     role : emailCheck.role,
