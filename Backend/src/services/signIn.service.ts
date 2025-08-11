@@ -7,7 +7,7 @@ import {v4 as uuidv4} from 'uuid';
 const prisma = new PrismaClient();
 
 const SECRET_KEY = config.SECRET_KEY;
-const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET;
+// const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET;
 
 interface SignIn {
     email: string,

@@ -1,16 +1,21 @@
 import { useState } from 'react'
-
 import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Register } from './auth/Register'
+import { LogIn } from './auth/LogIn'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <div>
-        <h3>Hello World</h3>
-        <button onClick={() => setCount(c=>c+1)}>Count: {count}</button>
-      </div>
+
+      <BrowserRouter>
+        <Routes>
+          <Route path='/Register' element={<Register />} />
+          <Route path='/Login' element={<LogIn />} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

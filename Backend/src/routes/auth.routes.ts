@@ -1,11 +1,13 @@
-import express from "express"
+import { Router } from "express";
 import { postSignup } from "../controllers/signUp.controller";
 import { postRefreshToken } from "../controllers/refreshToken.controller";
-const router = express.Router({mergeParams: true});
+import { postSignIn } from "../controllers/signIn.controller";
+import { postLogout } from "../controllers/logOut.controller";
+const router = Router();
 
 router.post("/signup", postSignup);
-router.post("/refresh-token", postRefreshToken)
-// router.post("/signin", postSignin);
-// router.post("/login", postLogout);
+router.post("/refresh", postRefreshToken)
+router.post("/signin", postSignIn);
+router.post("/login", postLogout);
 
 export default router

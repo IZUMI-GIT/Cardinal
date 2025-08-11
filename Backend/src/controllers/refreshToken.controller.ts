@@ -5,8 +5,12 @@ import { AppError } from "../utils/AppError";
 export const postRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     
     const refreshToken : string = req.cookies.refreshToken;
-    //fetch user-Agent => not implementation
-    const refreshResponse = await refreshService(refreshToken);
+    //fetch user-Agent => not implemented
+    let userAgent : string | undefined =  req.headers["user-agent"]
+    if(!userAgent){
+        userAgent = "default agent"
+    }
+    const refreshResponse = await refreshService(refreshToken, userAgent);
 
     if(refreshResponse.status === 201){
     
