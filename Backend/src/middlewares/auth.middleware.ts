@@ -3,6 +3,12 @@ import { config } from "../config/config";
 import { AppError } from "../utils/AppError";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+export type DecodedToken = {
+    email: string,
+    role : 'USER' | 'ADMIN',
+    id : number
+}
+
 const SECRET_KEY = config.SECRET_KEY;
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +18,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         if(!access_token) return next(new AppError('access token missing', 401));
 
         let decoded = jwt.verify(access_token, SECRET_KEY) as JwtPayload;
-        req.body.id = decoded.id;
+        req.body.userId = decoded.id;
         console.log(decoded)
         return next();
     } catch(err: unknown){
