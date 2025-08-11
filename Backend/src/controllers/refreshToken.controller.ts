@@ -10,12 +10,13 @@ export const postRefreshToken = async (req: Request, res: Response, next: NextFu
     if(!userAgent){
         userAgent = "default agent"
     }
+    console.log("refreshToken:", refreshToken)
     const refreshResponse = await refreshService(refreshToken, userAgent);
 
-    if(refreshResponse.status === 201){
+    if(refreshResponse.statusCode === 201){
     
             // Assuming the token and user are returned in the response
-            const { access_token, refresh_token, status, message } = refreshResponse;
+            const { access_token, refresh_token, statusCode, message } = refreshResponse;
             // Set the token in the response header
             res.cookie('accessToken', access_token, {
                 sameSite: 'lax',
@@ -31,15 +32,15 @@ export const postRefreshToken = async (req: Request, res: Response, next: NextFu
                 maxAge : 7*24*60*60*1000    //7 days
             } )
     
-            return res.status(status).json({
+            return res.status(statusCode).json({
                 message,
                 access_token
             })
         }else{
-            // return res.status(refreshResponse.status).json({
+            // return res.status(refreshResponse.statusCode).json({
             //     message : refreshResponse.message
             // })
     
-            return next(new AppError(refreshResponse.message, refreshResponse.status))
+            return next(new AppError(refreshResponse.message, refreshResponse.statusCode))
         }
 }

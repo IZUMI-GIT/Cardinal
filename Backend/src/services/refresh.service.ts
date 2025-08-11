@@ -10,8 +10,9 @@ const SECRET_KEY = config.SECRET_KEY;
 
 export const refreshService = async (token : string, userAgent : string) => {
 
+    // console.log("token:", token)
     if(!SECRET_KEY){
-        return {status: 401, message: "Key corrupted"};
+        return {statusCode: 401, message: "Key corrupted"};
     }
 
     // const response = jwt.verify(token, REFRESH_TOKEN_SECRET) as JwtPayload;
@@ -23,14 +24,17 @@ export const refreshService = async (token : string, userAgent : string) => {
     })
 
     if(!response){
-        return {status: 401, message: "session timed out"};
+        return {statusCode: 401, message: "session timed out"};
     }else{
-        console.log(response);
+        // console.log(response);
 
         try{
             const jwToken = jwt.sign(response, SECRET_KEY as string);
             // const refresh_token = jwt.sign(response, REFRESH_TOKEN_SECRET);
             const refresh_token = uuidv4()
+
+            const d = new Date();
+            d.setDate(d.getDate() + 7)
 
             await prisma.$transaction([
                 prisma.session.update({
@@ -47,18 +51,19 @@ export const refreshService = async (token : string, userAgent : string) => {
                         userId: response.userId,
                         refreshToken: refresh_token,
                         userAgent: userAgent,
+                        expiredAt: d
                     }
                 })
             ])
 
             return {
-                status : 201,
+                statusCode : 201,
                 message : "tokens are created",
                 access_token : jwToken,
                 refresh_token : refresh_token
             }
         }catch(e){
-            return {status : 501, message : "tokens not implemented"}
+            return {statusCode : 501, message : "tokens not implemented"}
         }
     }
 }

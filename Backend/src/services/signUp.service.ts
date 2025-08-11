@@ -17,7 +17,7 @@ const SECRET_KEY = config.SECRET_KEY;
 // const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET; 
 
 export const signupService = async (details : SignUp)  => {
-    console.log("Entered here")
+    // console.log("Entered here")
 
     const signupSchema = z.object({
         email : z.email(),
@@ -34,7 +34,7 @@ export const signupService = async (details : SignUp)  => {
     });
 
     if(!result.success){
-        return {status : 400, message : "enter details correctly"}
+        return {statusCode : 400, message : "enter details correctly"}
     }
     else{
         const emailCheck = await prisma.user.findUnique({
@@ -44,7 +44,7 @@ export const signupService = async (details : SignUp)  => {
         })
 
         if(emailCheck){
-            return {status : 409, message : "user already exists"}
+            return {statusCode : 409, message : "user already exists"}
         }else{
             try{
                 const salt = await bcrypt.genSalt(10);
@@ -60,7 +60,7 @@ export const signupService = async (details : SignUp)  => {
                 })
 
                 return {
-                    status : 201,
+                    statusCode : 201,
                     message: "user created successfully",
                     newUser
                 }
@@ -82,7 +82,7 @@ export const signupService = async (details : SignUp)  => {
                 // )
 
                 // return {
-                //     status: 201,
+                //     statusCode: 201,
                 //     message: "User created successfully",
                 //     access_token : jwToken,
                 //     refresh_token : refreshToken,
@@ -90,7 +90,7 @@ export const signupService = async (details : SignUp)  => {
                 // }
 
             }catch(e){
-                return {status: 500, message : "Internal Error"}
+                return {statusCode: 500, message : "Internal Error"}
             }
         }
     }
