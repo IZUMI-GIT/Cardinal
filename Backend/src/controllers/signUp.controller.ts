@@ -19,11 +19,12 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
     }
 
     const signupResponse = await signupService(details);
+    console.log("signupResponse :" , signupResponse.statusCode)
 
-    if(signupResponse.status === 201){
+    if(signupResponse.statusCode === 201){
 
         // Assuming the token and user are returned in the response
-        // const { access_token, refresh_token, status, message, user } = signupResponse;
+        // const { access_token, refresh_token, statusCode, message, user } = signupResponse;
         // // Set the token in the response header
         // res.cookie('accessToken', access_token, {
         //     sameSite: 'lax',
@@ -39,16 +40,16 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
         //     maxAge : 7*24*60*60*1000    //7 days
         // } )
 
-        return res.status(signupResponse.status).json({
+        return res.status(signupResponse.statusCode).json({
             message : signupResponse.message,
             user : signupResponse.newUser
         })
         
     }else{
-        // return res.status(signupResponse.status).json({
+        // return res.status(signupResponse.statusCode).json({
         //     message : signupResponse.message
         // })
 
-        return next(new AppError(signupResponse.message, signupResponse.status))
+        return next(new AppError(signupResponse.message, signupResponse.statusCode))
     }
 }

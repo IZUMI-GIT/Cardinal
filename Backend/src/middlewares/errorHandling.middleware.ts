@@ -18,6 +18,7 @@ export const errorHandler = (err : any, req : Request, res : Response, next : Ne
 
     console.log("---------Error types--------")
     console.log(typeof err);
+    console.log(err)
     console.log(Object.keys(err))
     console.log(err.statusCode)
     console.log(err.isOperational);

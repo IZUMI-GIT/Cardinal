@@ -12,10 +12,11 @@ const SECRET_KEY = config.SECRET_KEY;
 interface SignIn {
     email: string,
     password: string,
-    userAgent: string
+    userAgent: string,
+    userIP : string
 }
 
-export const signInService = async ({email, password, userAgent}: SignIn) => {
+export const signInService = async ({email, password, userAgent, userIP}: SignIn) => {
 
     const loginSchema = z.object({
         email: z.string(),
@@ -23,23 +24,25 @@ export const signInService = async ({email, password, userAgent}: SignIn) => {
     })
 
     const zodResult = loginSchema.safeParse({email, password});
+    // console.log("zodResult :", zodResult)
 
     if(!zodResult.success){
-        return {status: 400, message : "enter details correctly"}
+        return {statusCode: 400, message : "enter details correctly"}
     }else{
         const emailCheck = await prisma.user.findUnique({
             where: {
                 email
             }
         })
+        // console.log("emailCheck :", emailCheck)
 
         if(!emailCheck){
-            return {status: 409, message: "user already exists"}
+            return {statusCode: 409, message: "user doesn't exist"}
         }else{
             try{
                 const hashPassword = emailCheck.hashedPassword;
                 const hashVerify = await bcrypt.compare(password, hashPassword);
-
+                // console.log("hashverify :", hashVerify)
                 if(hashVerify){
                     const jwToken = jwt.sign({
                         email,
@@ -49,16 +52,20 @@ export const signInService = async ({email, password, userAgent}: SignIn) => {
                     )
 
                     const refreshToken = uuidv4();
+                    const d = new Date();
+                    d.setDate(d.getDate() + 7)
 
                     const response = await prisma.session.create({
                         data: {
-                            userId : emailCheck.id,
+                            userId: emailCheck.id,
                             refreshToken,
-                            userAgent
+                            userAgent,
+                            expiredAt: d,
+                            ipAddress: userIP
                         }
                     })
 
-                    console.log("uuid: ", response)
+                    // console.log("uuid: ", response)
 
                     // const refreshToken = jwt.sign({
                     //     email,
@@ -68,15 +75,17 @@ export const signInService = async ({email, password, userAgent}: SignIn) => {
                     // )
 
                     return {
-                        status: 201,
+                        statusCode: 201,
                         message: "User created successfully",
                         access_token : jwToken,
                         refresh_token : refreshToken,
                         user: emailCheck
                     }
+                }else{
+                    return {statusCode: 400, message: "enter correct credentials"}
                 }
             }catch(e){
-                return {status: 500, message: "Internal Error"}
+                return {statusCode: 500, message: "Internal Error"}
             }
         }
 
