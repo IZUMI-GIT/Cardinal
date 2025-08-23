@@ -1,21 +1,17 @@
 import { useState } from 'react'
 import './App.css'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Register } from './auth/Register'
-import { LogIn } from './auth/LogIn'
+import { Routing } from './routes/Routing'
+
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-
-      <BrowserRouter>
-        <Routes>
-          <Route path='/Register' element={<Register />} />
-          <Route path='/Login' element={<LogIn />} />
-        </Routes>
-      </BrowserRouter>
+      <div>
+        <button className='border bg-sky-500 rounded-sm px-2 hover:bg-sky-700' type="button" onClick={() => setCount(c => c+1)}>Click Me! : {count}</button>
+      </div>
+      <Routing />
     </>
   )
 }
