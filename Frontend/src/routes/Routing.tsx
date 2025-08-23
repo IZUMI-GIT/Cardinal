@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { Register } from "../auth/Register"
-import { LogIn } from "../auth/LogIn"
+import { LogInModal } from "../auth/LogInModal"
 import { Home } from "../components/Home"
 
 export const Routing = () => {
@@ -11,7 +11,7 @@ export const Routing = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/login' element={<LogIn />} />
+          <Route path='/login' element={<LogInModal />} />
         </Routes>
       </BrowserRouter>
         </>
