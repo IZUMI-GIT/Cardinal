@@ -31,18 +31,15 @@ export function LogInModal () {
     }
 
     return (
-        <div className="h-screen flex items-center justify-center">
-            <div className="border-4 border-black-500 p-4 rounded-md leading-6 shadow-lg">
-                <form onSubmit={handleSubmit}>
-                    <label className="font-semibold">Email : </label>
-                    <br />
-                    <input className="border-2 border-black-2 rounded-md mb-2" type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="enter mail ID"/>
-                    <br />
-                    <label className="font-semibold">Password : </label>
-                    <br />
-                    <input className="border-2 border-black-2 rounded-md mb-2" type="password" name="password" value={password} min='8' onChange={(e) => setPassword(e.target.value)} placeholder="enter password" />
-                    <br />
-                    <button className="mx-auto border px-2 rounded-md bg-blue-300 hover:bg-blue-500" type="submit">Login</button>
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+            <div className="w-full max-w-sm bg-white border border-gray-200 p-6 rounded-2xl shadow-lg">
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                    <label className="block text-md font-medium text-gray-700">Email : </label>
+                    <input className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="email" name="email" value={email} autoComplete="email" onChange={(e) => setEmail(e.target.value)} placeholder="enter mail ID"/>
+                    <label className="block text-md font-medium text-gray-700">Password : </label>
+                    <input className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="password" name="password" value={password} minLength={8} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" placeholder="enter password" />
+                    <p className="text-sm text-gray-500">At least 8 characters, include a number</p>
+                    <button className="w-full bg-blue-600 rounded-lg px-3 py-2 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" type="submit">Login</button>
                 </form>
             </div>
         </div>
