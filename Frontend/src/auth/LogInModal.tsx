@@ -2,9 +2,8 @@ import { useState } from "react"
 import {z} from 'zod'
 import { Link, useNavigate } from 'react-router-dom';
 
-
 export function LogInModal () {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('')
@@ -55,7 +54,7 @@ export function LogInModal () {
                         className="w-full bg-blue-600 rounded-lg px-3 py-2 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" 
                         type="submit" disabled = {!email || password.length < 8}
                     >
-                        SignIn
+                         SignIn   {/* {isPending ? '...Loading': 'Login'} */}
                     </button>
                     <label className="text-sm text-gray-400">
                         Don't have an account?
