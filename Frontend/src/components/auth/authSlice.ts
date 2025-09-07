@@ -48,7 +48,10 @@ const authSlice = createSlice({
             state.error = action.payload
         },
 
-        //setAuthStatus("checking")
+        // setAuthStatus(state, action:PayloadAction<'checking'>){
+        //     console.log(state, action.payload);
+        //     state.status = action.payload
+        // }
     }
 })
 

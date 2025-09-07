@@ -1,6 +1,6 @@
 import { useState } from "react"
 import {z} from 'zod'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export function LogInModal () {
     // const navigate = useNavigate();
