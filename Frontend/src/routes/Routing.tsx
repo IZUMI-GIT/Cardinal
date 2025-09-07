@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { Register } from "../auth/Register"
-import { LogInModal } from "../auth/LogInModal"
+import { Register } from "../components/auth/Register"
+import { LogInModal } from "../components/auth/LogInModal"
 import { Home } from "../components/Home"
 
 export const Routing = () => {
