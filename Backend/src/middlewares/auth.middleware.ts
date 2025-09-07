@@ -17,7 +17,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         const access_token = req.cookies.access_token;
         if(!access_token) return next(new AppError('access token missing', 401));
 
-        let decoded = jwt.verify(access_token, SECRET_KEY) as JwtPayload;
+        const decoded = jwt.verify(access_token, SECRET_KEY) as JwtPayload;
         req.body.userId = decoded.id;
         console.log(decoded)
         return next();

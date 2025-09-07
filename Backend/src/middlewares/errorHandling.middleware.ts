@@ -9,8 +9,8 @@ import { AppError } from "../utils/AppError";
 export const errorHandler = (err : any, req : Request, res : Response, next : NextFunction) => {
     
     const isAppError = err instanceof AppError;
-    let statusCode : number = isAppError ? err.statusCode : 500;
-    let message : string =isAppError ? err.message : 'An unexpected error occured';
+    const statusCode : number = isAppError ? err.statusCode : 500;
+    const message : string =isAppError ? err.message : 'An unexpected error occured';
     
     // if(process.env.NODE_ENV !== 'production'){
     //     console.error(err.stack)
