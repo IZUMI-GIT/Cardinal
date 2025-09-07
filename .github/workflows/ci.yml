@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  bakcend:
+  backend:
     name: Backend - lint -> types -> unit -> integration -> build
     runs-on: ubuntu-latest
     
