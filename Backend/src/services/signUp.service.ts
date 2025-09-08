@@ -1,8 +1,7 @@
 import * as z from "zod";
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
-import { config } from "../config/config";
+// import { config } from "../config/config";
 // import dotenv from "dotenv";
 // dotenv.config();
 const prisma = new PrismaClient();
@@ -13,7 +12,7 @@ interface SignUp {
     username: string
 }
 
-const SECRET_KEY = config.SECRET_KEY;
+// const SECRET_KEY = config.SECRET_KEY;
 // const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET; 
 
 export const signupService = async (details : SignUp)  => {
@@ -89,7 +88,7 @@ export const signupService = async (details : SignUp)  => {
                 //     user: newUser
                 // }
 
-            }catch(e){
+            }catch{
                 return {statusCode: 500, message : "Internal Error"}
             }
         }
