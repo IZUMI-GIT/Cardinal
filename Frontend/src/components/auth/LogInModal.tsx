@@ -1,30 +1,12 @@
 import { useState } from "react"
 import {z} from 'zod'
-import { Link, useNavigate } from 'react-router-dom';
-import { useMutation } from "@tanstack/react-query";
-import { login } from "../lib/api";
-
-
+import { Link } from 'react-router-dom';
 
 export function LogInModal () {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('')
-
-    const {
-        mutate: signin,
-        isPending,
-        isError
-    } = useMutation({
-        mutationFn: login,
-        onSuccess: () => {
-            navigate('/me',{
-                replace: true   //history will be replaced
-            })
-        }
-
-    })
 
     const loginSchema = z.object({
         email : z.email(),
@@ -52,34 +34,27 @@ export function LogInModal () {
         <div className="min-h-screen bg-gray-100 flex items-center justify-center">
             <div className="w-full max-w-sm bg-white border border-gray-200 p-6 rounded-2xl shadow-lg">
                 <form className="space-y-4" onSubmit={handleSubmit}>
-                    { isError && <label className=" border-2 mb-3 bg-red-100">Invalid credentials</label>}
-                    <label className="block text-md font-medium text-gray-700">Email : </label>
+                    <label className="block text-md font-medium text-gray-700" htmlFor="email">Email : </label>
                     <input className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                        type="email" name="email" 
+                        type="email" name="email" id="email"
                         value={email} autoComplete="email" 
                         onChange={(e) => setEmail(e.target.value)} 
                         placeholder="enter mail ID" 
                     />
-                    <label className="block text-md font-medium text-gray-700">Password : </label>
+                    <label className="block text-md font-medium text-gray-700" htmlFor="password">Password : </label>
                     <input className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                        type="password" name="password" 
+                        type="password" name="password" id="password"
                         value={password} minLength={8} 
                         onChange={(e) => setPassword(e.target.value)} 
                         autoComplete="current-password" placeholder="enter password"
-                        onKeyDown={
-                            (e) => e.key === 'Enter' && signin({email, password})
-                        }
                     />
                     <p className="text-xs text-gray-500">At least 8 characters, include a number</p>
                     <Link className="text-sm text-blue-400 text-center md:text-right" to="/password/forgot">forgot password?</Link>
                     <button 
                         className="w-full bg-blue-600 rounded-lg px-3 py-2 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" 
                         type="submit" disabled = {!email || password.length < 8}
-                        onClick={
-                            () => signin({email, password})
-                        }
                     >
-                        SignIn    {isPending ? '...Loading': 'Login'}
+                         SignIn   {/* {isPending ? '...Loading': 'Login'} */}
                     </button>
                     <label className="text-sm text-gray-400">
                         Don't have an account?

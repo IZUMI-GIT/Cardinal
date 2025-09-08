@@ -55,7 +55,8 @@ export const signInService = async ({email, password, userAgent, userIP}: SignIn
                     const d = new Date();
                     d.setDate(d.getDate() + 7)
 
-                    const response = await prisma.session.create({
+                    // const response = 
+                    await prisma.session.create({
                         data: {
                             userId: emailCheck.id,
                             refreshToken,
@@ -84,7 +85,7 @@ export const signInService = async ({email, password, userAgent, userIP}: SignIn
                 }else{
                     return {statusCode: 400, message: "enter correct credentials"}
                 }
-            }catch(e){
+            }catch{
                 return {statusCode: 500, message: "Internal Error"}
             }
         }

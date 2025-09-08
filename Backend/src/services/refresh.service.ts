@@ -62,7 +62,7 @@ export const refreshService = async (token : string, userAgent : string) => {
                 access_token : jwToken,
                 refresh_token : refresh_token
             }
-        }catch(e){
+        }catch{
             return {statusCode : 501, message : "tokens not implemented"}
         }
     }
