@@ -1,68 +1,53 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../../app/store";
+import { createSlice, type PayloadAction,  } from "@reduxjs/toolkit";
 
 export interface User {
     id: number,
-    name: string,
     email: string,
+    username: string,
     role?: string
 }
+
 export interface Auth {
-    status: 'idle' | 'authenticated' | 'unauthenticated' | 'error' | 'checking',
+    status: 'idle' | 'authenticated' | 'unauthenticated' | 'error',
     user: null | User,
-    error?: string | null,
-    lastCheckedAt?: number
+    error?: null | string,
+    lastCheckedAt?: null | number
 }
 
 const initialState: Auth = {
     status: 'idle',
     user: null,
-    error: null
+    error: null,
+    lastCheckedAt: null
 }
 
 const authSlice = createSlice({
-    name: "auth",
+    name: 'auth',
     initialState,
-    reducers:{
-        setAuthUser(state, action: PayloadAction<User>){
+    reducers: {
+        setAuthUser(state, action: PayloadAction<User>) {
             state.user = action.payload;
-            state.status = 'authenticated';
-            state.error = null;
-            state.lastCheckedAt = Date.now()
-        },
-
-        clearAuth(state, action: PayloadAction){
-            state.user = null;
-            state.status = "unauthenticated";
+            state.status = "authenticated";
+            state.lastCheckedAt = Date.now();
             state.error = null
-            console.log(action.payload)
         },
-
-        setAuthStatus(state, action:PayloadAction<Auth["status"]>){
-            console.log(state);
+        clearAuth(state){
+            state.user = null;
+            state.status = 'unauthenticated'
+        },
+        setAuthStatus(state, action: PayloadAction<Auth['status']>){
             state.status = action.payload
         },
-
-        setAuthError(state, action:PayloadAction<string | null>){
-            console.log(state, action.payload);
+        setAuthError(state, action: PayloadAction<string | null>) {
             state.error = action.payload
-        },
-
-        // setAuthStatus(state, action:PayloadAction<'checking'>){
-        //     console.log(state, action.payload);
-        //     state.status = action.payload
-        // }
+        }
     }
+
 })
 
-
-//exporting the generated reducer functions
+export const { setAuthUser, clearAuth, setAuthStatus, setAuthError } = authSlice.actions;
 export default authSlice.reducer;
-export const {setAuthUser, clearAuth, setAuthStatus, setAuthError} = authSlice.actions
 
-export const selectAuthStatus = (s: RootState) => s.auth.status;
-export const selectCurrentUser = (s: RootState) => s.auth.user;
-export const selectIsAuthenticated = (s: RootState) => {
-    const x = Boolean(s.auth.user && s.auth.status === "authenticated")
-    return x;
-}
+export const userData = (s: {auth: Auth}) => s.auth.user;
+export const isUserAuthenticated = (s: {auth: Auth}) => s.auth.status === 'authenticated' && s.auth.user != null
+export const authStatus = (s: {auth: Auth}) => s.auth.status;
