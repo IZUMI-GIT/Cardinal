@@ -1,5 +1,5 @@
 
-export const getBoardsService = ( userId : number ) => {
+export const getBoardsService = ( _userId : number ) => {
 
 
 }

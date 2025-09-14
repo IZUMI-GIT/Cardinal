@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <div>
-        <button className='border bg-sky-500 rounded-sm px-2 hover:bg-sky-700' type="button" onClick={() => setCount(c => c+1)}>Click Me! : {count}</button>
+        <button className='border bg-sky-500 rounded-lg px-2 hover:bg-sky-700' type="button" onClick={() => setCount(c => c+1)}>Click Me! : {count}</button>
       </div>
       <Routing />
     </>

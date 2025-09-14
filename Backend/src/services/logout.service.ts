@@ -25,7 +25,8 @@ export const logoutService = async (accessToken: string, refreshToken: string) =
             return {statusCode: 401, message: "session timed out"}
         }
 
-        const sessionRefreshResponse = await primsa.session.update({
+        // const sessionRefreshResponse = 
+        await primsa.session.update({
             where: {
                 refreshToken: refreshToken
             }, 
@@ -35,7 +36,7 @@ export const logoutService = async (accessToken: string, refreshToken: string) =
         })
         // console.log("sessionRefreshResponse:", sessionRefreshResponse)
         return {statusCode: 200, message: "session updated"}
-    }catch(e){
+    }catch{
         // console.log(e)
         return {statusCode: 500, message: "token internal error"}
     }

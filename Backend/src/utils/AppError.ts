@@ -1,6 +1,6 @@
 
 export class AppError extends Error {
-    [x: string]: any;
+    [x: string]: unknown;
     statusCode: number;
     isOperational: boolean;
 

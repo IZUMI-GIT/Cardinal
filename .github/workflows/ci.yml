@@ -1,0 +1,69 @@
+name: Monorepo CI (backend-first)
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend - lint -> types -> unit -> integration -> build
+    runs-on: ubuntu-latest
+    
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install backend deps
+        working-directory: Backend
+        run: npm ci
+      
+      - name: Lint Backend
+        working-directory: Backend
+        run: npm run lint
+      
+      - name: TypeCheck backend
+        working-directory: Backend
+        run: npm run typecheck
+
+      - name: Build Backend
+        working-directory: Backend
+        run: npm run build
+
+  frontend:
+    name: frontend = lint-> typecheck -> test -> build
+    runs-on: ubuntu-latest
+    needs: backend
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install frontend deps
+        working-directory: Frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: Frontend
+        run: npm run lint
+
+      - name: Typecheck frontend
+        working-directory: Frontend
+        run: npm run typecheck
+      
+      - name: Build frontend
+        working-directory: Frontend
+        run: npm run build

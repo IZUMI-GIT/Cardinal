@@ -1,0 +1,15 @@
+{
+  "env": {
+    "node": true,          // tells ESLint “this code runs in Node.js”
+    "es2021": true         // allows modern JS features (like let/const, optional chaining, etc.)
+  },
+  "settings": {
+    "react": {
+      "version": "detect"  // clears that React warning (safe to add anywhere)
+    }
+  },
+  "parserOptions": {
+    "ecmaVersion": 2021,   // modern JS syntax
+    "sourceType": "module" // allows ES imports (`import ... from`)
+  }
+}
