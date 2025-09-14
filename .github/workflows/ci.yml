@@ -46,7 +46,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Setup node
+      - name: Setup React
         uses: actions/setup-node@v4
         with:
           node-version: '18'
