@@ -1,19 +1,24 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import {z} from 'zod'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useLoginMutation } from "../../api/apiSlice";
 
 export function LogInModal () {
     // const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('')
+    const navigate = useNavigate()
+
 
     const loginSchema = z.object({
         email : z.email(),
         password : z.string().min(8)
     })
+    
+    const [login] = useLoginMutation();
 
-    function handleSubmit(e : React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e : React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
         // const form = e.currentTarget;
@@ -28,9 +33,15 @@ export function LogInModal () {
         if(!schemaResponse.success){
             return alert("enter details correctly")
         }
+
+        const result = await login({email, password});
+        console.log(result)
+        if(!result.error){
+            navigate('/boards')
+        }
     }
 
-    return (
+    return(
         <div className="min-h-screen bg-gray-100 flex items-center justify-center">
             <div className="w-full max-w-sm bg-white border border-gray-200 p-6 rounded-2xl shadow-lg">
                 <form className="space-y-4" onSubmit={handleSubmit}>
@@ -54,7 +65,7 @@ export function LogInModal () {
                         className="w-full bg-blue-600 rounded-lg px-3 py-2 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" 
                         type="submit" disabled = {!email || password.length < 8}
                     >
-                         SignIn   {/* {isPending ? '...Loading': 'Login'} */}
+                        SignIn
                     </button>
                     <label className="text-sm text-gray-400">
                         Don't have an account?
