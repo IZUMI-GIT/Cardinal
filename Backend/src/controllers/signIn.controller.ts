@@ -38,7 +38,7 @@ export const postSignIn = async (req: Request, res: Response, next: NextFunction
     if(!signInResponse){
         return next(new AppError("Sign-In service failed to respond", 501))
     }
-    if(signInResponse.statusCode === 201){
+    if(signInResponse.statusCode === 200){
     
             // Assuming the token and user are returned in the response
             const { access_token, refresh_token, statusCode, message, user } = signInResponse;

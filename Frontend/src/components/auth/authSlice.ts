@@ -10,7 +10,7 @@ export interface User {
 export interface Auth {
     status: 'idle' | 'authenticated' | 'unauthenticated' | 'error' | 'loading',
     user: null | User,
-    error?: null | string,
+    error?: null | {statusCode: number, message: string},
     lastCheckedAt?: null | number
 }
 
@@ -38,7 +38,7 @@ const authSlice = createSlice({
         setAuthStatus(state, action: PayloadAction<Auth["status"]>){
             state.status = action.payload;
         },
-        setAuthError(state, action: PayloadAction<string | null>) {
+        setAuthError(state, action: PayloadAction<Auth['error']>) {
             state.status = 'error';
             state.error = action.payload
         }

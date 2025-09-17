@@ -77,7 +77,7 @@ export const signInService = async ({email, password, userAgent, userIP}: SignIn
 
                     return {
                         statusCode: 200,
-                        message: "User created successfully",
+                        message: "User logged in successfully",
                         access_token : jwToken,
                         refresh_token : refreshToken,
                         user: emailCheck
