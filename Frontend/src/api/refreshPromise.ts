@@ -1,4 +1,4 @@
-import { fetchBaseQuery, type FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { fetchBaseQuery, type BaseQueryFn, type FetchArgs, type FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { clearAuth, setAuthUser, type User } from "../components/auth/authSlice";
 
 
@@ -13,7 +13,7 @@ const is401 = (error: unknown): boolean => {
         return (error as FetchBaseQueryError).status === 401;
 }
 
-const baseQueryWithReAuth = async (args: any, api: any, extraOptions: any) => {
+const baseQueryWithReAuth :BaseQueryFn<string | FetchArgs> = async (args, api, extraOptions) => {
 
     let result = await rawBaseQuery(args, api, extraOptions);
 
