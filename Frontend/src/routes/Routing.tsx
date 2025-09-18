@@ -4,8 +4,13 @@ import { LogInModal } from "../components/auth/LogInModal"
 import { Home } from "../components/Home"
 import { WrapperRoute } from "./WrapperRoute"
 import { Board } from "../components/boards/Board"
+import { useRefreshMutation } from "../api/apiSlice"
+
 
 export const Routing = () => {
+
+  const [refresh] = useRefreshMutation();
+  refresh();
 
     return(
         <>
