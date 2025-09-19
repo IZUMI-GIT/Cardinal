@@ -11,9 +11,12 @@ export const postRefreshToken = async (req: Request, res: Response, next: NextFu
         userAgent = "default agent"
     }
     console.log("refreshToken:", refreshToken)
-    const refreshResponse = await refreshService(refreshToken, userAgent);
 
-    if(refreshResponse.statusCode === 201){
+    if(!refreshToken){
+        return next(new AppError("no refresh token", 403))
+    }else{
+        const refreshResponse = await refreshService(refreshToken, userAgent);
+        if(refreshResponse.statusCode === 201){
     
             // Assuming the token and user are returned in the response
             const { access_token, refresh_token, statusCode, message } = refreshResponse;
@@ -43,4 +46,6 @@ export const postRefreshToken = async (req: Request, res: Response, next: NextFu
     
             return next(new AppError(refreshResponse.message, refreshResponse.statusCode))
         }
+    }
+    
 }

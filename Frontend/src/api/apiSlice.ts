@@ -26,7 +26,7 @@ export const apiSlice = createApi({
         refresh: builder.mutation<void, void>({
             query: () => ({
                 url: '/refresh',
-                method: 'GET',
+                method: 'POST',
             }),
             invalidatesTags: ['Refresh']
         }),
