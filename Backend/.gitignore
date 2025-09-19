@@ -1,52 +1,47 @@
-# Node.js dependencies
+# Node.js
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+.pnp/
+.pnp.js
+
+# Build artifacts
+build/
+dist/
 
 # Environment variables
 .env
 .env.local
-.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
-logs
+logs/
 *.log
-logs/*.log
-pids
-*.pid
-*.seed
-*.pid.lock
 
-# OS files
+# Temporary files
+tmp/
+temp/
+
+# OS and Editor specific
 .DS_Store
 Thumbs.db
-
-# Build output
-dist/
-build/
-coverage/
-
-# Cache
-.cache/
-.npm/
-.eslintcache
-.stylelintcache
-
-# Editor directories and files
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
+*~
 
-# Optional: PM2 logs
-.pm2/
+# Sensitive files
+keys/
+certs/
+*.pem
+*.key
+*.crt
 
-# Optional: Docker
-docker-compose.override.yml
+# Test coverage
+coverage/
+.nyc_output/
 
-# Optional: Testing
-jest-html-reporters-*.html
+# ESLint cache
+.eslintcache
