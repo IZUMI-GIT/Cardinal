@@ -37,7 +37,7 @@ export function LogInModal () {
         const result = await login({email, password});
         console.log(result)
         if(!result.error){
-            navigate('/boards')
+            navigate('/board')
         }
     }
 
