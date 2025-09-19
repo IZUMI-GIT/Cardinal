@@ -5,12 +5,13 @@ import { Home } from "../components/Home"
 import { WrapperRoute } from "./WrapperRoute"
 import { Board } from "../components/boards/Board"
 import { useRefreshMutation } from "../api/apiSlice"
+import { useEffect } from "react"
 
 
-export const Routing = () => {
-
+const Routing = () => {
+  
   const [refresh] = useRefreshMutation();
-  refresh();
+  useEffect(() => {refresh()}, []);
 
     return(
         <>
@@ -27,3 +28,5 @@ export const Routing = () => {
         </>
     )
 }
+
+export default Routing;
