@@ -10,26 +10,39 @@ jobs:
   backend:
     name: Backend - lint -> types -> unit -> integration -> build
     runs-on: ubuntu-latest
-    
     if: github.event_name == 'pull_request' || github.event_name == 'push'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: setup node
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install backend deps
+      - name: Debug repo layout (backend)
+        run: |
+          echo "pwd: $(pwd)"
+          ls -la
+          echo "Backend folder:"
+          ls -la Backend || true
+          git ls-files | grep package-lock.json || true
+
+      - name: Install backend dependencies (ci, fallback to install)
         working-directory: ./Backend
-        run: npm ci
-      
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci || npm install
+          else
+            echo "No package-lock.json in Backend; running npm install (not ideal for reproducibility)"
+            npm install
+          fi
+
       - name: Lint Backend
         working-directory: ./Backend
         run: npm run lint
-      
+
       - name: TypeCheck backend
         working-directory: ./Backend
         run: npm run typecheck
@@ -42,19 +55,33 @@ jobs:
     name: frontend = lint-> typecheck -> test -> build
     runs-on: ubuntu-latest
     needs: backend
-    steps: 
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Setup React
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
-      - name: Install frontend deps
+
+      - name: Debug repo layout (frontend)
+        run: |
+          echo "pwd: $(pwd)"
+          ls -la
+          echo "Frontend folder:"
+          ls -la Frontend || true
+          git ls-files | grep package-lock.json || true
+
+      - name: Install frontend dependencies (ci, fallback to install)
         working-directory: ./Frontend
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci || npm install
+          else
+            echo "No package-lock.json in Frontend; running npm install (not ideal for reproducibility)"
+            npm install
+          fi
 
       - name: Lint frontend
         working-directory: ./Frontend
@@ -63,7 +90,7 @@ jobs:
       - name: Typecheck frontend
         working-directory: ./Frontend
         run: npm run typecheck
-      
+
       - name: Build frontend
         working-directory: ./Frontend
         run: npm run build
