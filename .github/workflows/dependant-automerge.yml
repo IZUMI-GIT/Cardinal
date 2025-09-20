@@ -1,0 +1,39 @@
+name: Dependabot auto-approve & auto-merge (patch & security)
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot-automerge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Debug metadata (logs)
+        run: |
+          echo "dependency-names=${{ steps.metadata.outputs.dependency-names }}"
+          echo "update-type=${{ steps.metadata.outputs.update-type }}"
+          echo "pr_number=${{ github.event.pull_request.number }}"
+
+      - name: Auto-approve Dependabot PR
+        uses: hmarr/auto-approve-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge for safe updates (patch or security)
+        if: contains( steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains( steps.metadata.outputs.update-type, 'security' )
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
