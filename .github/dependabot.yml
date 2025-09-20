@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/Backend"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       backend-minor:
         update-types: ["minor", "patch"]
@@ -11,7 +11,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/Frontend"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       frontend-minor:
         update-types: ["minor", "patch"]
