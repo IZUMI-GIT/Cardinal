@@ -1,4 +1,5 @@
 name: Dependabot approve & enable auto-merge
+
 on:
   pull_request_target:            # run in base-branch context (needed to write to PR)
     types: [opened, reopened, synchronize]
