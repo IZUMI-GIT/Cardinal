@@ -6,7 +6,12 @@ updates:
       interval: "daily"
     groups:
       backend-minor:
-        update-types: ["minor", "patch"]
+        update-types: ["minor", "patch", "security"]
+    ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major"]
+    open-pull_request-limit: 10
+    auto-merge: true
 
   - package-ecosystem: "npm"
     directory: "/Frontend"
@@ -14,4 +19,9 @@ updates:
       interval: "daily"
     groups:
       frontend-minor:
-        update-types: ["minor", "patch"]
+        update-types: ["minor", "patch", "security"]
+    ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major"]
+    open-pull_request-limit: 10
+    auto-merge: true
