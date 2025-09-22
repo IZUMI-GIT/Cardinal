@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import {z} from 'zod';
+import { useSignupMutation } from "../../api/apiSlice";
 
 const Register = () => {
 
@@ -8,6 +9,40 @@ const Register = () => {
     const [password, setPassword] = useState("")
     const [name, setName] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+
+    const navigate = useNavigate()
+
+    const signUpSchema = z.object({
+        name: z.string(),
+        email: z.email(),
+        password: z.string().min(8)
+    })
+
+    const [signup] = useSignupMutation();
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        const schemsResponse = signUpSchema.safeParse({
+            name,
+            email,
+            password
+        })
+
+        if(!schemsResponse.success){
+            return alert("enter details correctly")
+        }
+
+        const result = await signup({
+            name,
+            email,
+            password
+        })
+
+        if(!result.error){
+            navigate('/boards')
+        }
+    }
 
 
     return(
@@ -62,7 +97,7 @@ const Register = () => {
                     </button>
                     <label className="text-sm  text-gray-400">
                         Already have an account?
-                        <Link to="/login" className="text-blue-400">SignIn</Link>
+                        <Link to="/login" className="text-blue-400"> SignIn</Link>
                     </label>
                 </form>
             </div>

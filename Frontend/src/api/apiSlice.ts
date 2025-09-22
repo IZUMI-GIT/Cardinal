@@ -12,6 +12,27 @@ export const apiSlice = createApi({
             query: () => "/me",
             providesTags: ['User']
         }),
+        signup: builder.mutation<User, {name: string, email: string, password: string}>({
+            query: ({name, email, password}) => ({
+                url: '/signup',
+                method: 'POST',
+                body: {
+                    name,
+                    email,
+                    password
+                }
+            })
+        }),
+        username: builder.mutation<User,{email: string, username: string}>({
+            query: ({email, username}) => ({
+                url: '/username',
+                method: 'PATCH',
+                body: {
+                    email,
+                    username
+                }
+            })
+        }),
         login: builder.mutation<User, {email: string, password: string}>({
             query: ({email, password}) => ({
                 url: '/signin',
@@ -43,6 +64,8 @@ export const apiSlice = createApi({
 export const { 
     useMeQuery,
     useLoginMutation,
+    useSignupMutation,
+    useUsernameMutation,
     useRefreshMutation,
     useLogoutMutation
 } = apiSlice
