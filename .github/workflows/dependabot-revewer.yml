@@ -31,6 +31,7 @@ jobs:
                 contains(steps.dependabot-metadata.outputs.update-type, 'security')
             uses: hmarr/auto-approve-action@v2
             with: 
+                token: ${{ secrets.GITHUB_TOKEN }}
                 review-message: "Auto-approved PR"
 
           - name: Enable auto-merge for auto-approved
