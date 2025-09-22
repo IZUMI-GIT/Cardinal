@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom"
 import { useAppSelector } from "../app/hooks";
 import { authStatus, isUserAuthenticated } from "../components/auth/authSlice";
+import Spinner from "../features/Spinner";
 
 export const WrapperRoute = () => {
 
@@ -9,9 +10,8 @@ export const WrapperRoute = () => {
 
     if(status === "loading"){
         return (
-        <div>
-            Loading...
-        </div>)
+            <Spinner />
+        )
     }
 
     if (!isAuth){
