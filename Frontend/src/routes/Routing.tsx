@@ -30,16 +30,6 @@ const Routing = () => {
 
     setAuthStatus("authenticated");
 
-    // return (
-    //   <BrowserRouter>
-    //   <Routes>
-    //     <Route element={<WrapperRoute />} >
-    //       <Route path="/boards" element={<Board />} />
-    //     </Route>
-    //     <Route path="/" element={<Home />} />
-    //   </Routes>
-    // </BrowserRouter>
-    // )
   }else if(isError && (error as FetchBaseQueryError).status === 401){
     
     const refresh = useRefreshMutation;
