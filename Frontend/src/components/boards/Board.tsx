@@ -1,5 +1,5 @@
 
-export const Board = () => {
+const Board = () => {
 
     const boardSet = [
         {id: 1, boardTitle : "NewBoard" },
@@ -18,3 +18,5 @@ export const Board = () => {
         </>
     )
 }
+
+export default Board;

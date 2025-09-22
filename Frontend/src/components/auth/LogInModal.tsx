@@ -3,7 +3,7 @@ import {z} from 'zod'
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation } from "../../api/apiSlice";
 
-export function LogInModal () {
+export default function LogInModal () {
     // const navigate = useNavigate();
 
     const [email, setEmail] = useState('');

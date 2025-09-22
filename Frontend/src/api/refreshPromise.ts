@@ -10,7 +10,7 @@ const rawBaseQuery = fetchBaseQuery({
 const is401 = (error: unknown): boolean => {
     if(!error || typeof error !== 'object' || 'id' in error) return false
     
-        return (error as FetchBaseQueryError).status === 401;
+    return (error as FetchBaseQueryError).status === 401;
 }
 
 const baseQueryWithReAuth :BaseQueryFn<string | FetchArgs> = async (args, api, extraOptions) => {

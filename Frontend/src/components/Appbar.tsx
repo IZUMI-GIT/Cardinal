@@ -6,9 +6,9 @@ export const Appbar = () => {
 
     return(
         <>
-        Page Logo
-        <button className="border border-grey-300 px-2" onClick={() => navigate('/login')}>Login</button>
-        <button className="border border-indigo-500 bg-blue-600 px-2" onClick={() => navigate('/register')}>Register</button>
+            Page Logo
+            <button className="border border-grey-300 px-2" onClick={() => navigate('/login')}>Login</button>
+            <button className="border border-indigo-500 bg-blue-600 px-2" onClick={() => navigate('/register')}>Register</button>
         </>
     )
 }

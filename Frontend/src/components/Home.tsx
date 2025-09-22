@@ -1,8 +1,10 @@
 import { Appbar } from "./Appbar"
 
-export const Home = () => {
+const Home = () => {
 
     return(
         <Appbar />
     )
 }
+
+export default Home;
