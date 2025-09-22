@@ -26,7 +26,9 @@ function App() {
     refetch
   } = useMeQuery();
 
-  const [refresh, {isLoading: isRefreshing}] = useRefreshMutation();
+  const [refresh] = useRefreshMutation();
+
+  // const [refresh, {isLoading: isRefreshing}] = useRefreshMutation();
 
   useEffect(() => {
     if( me && meSucces){
