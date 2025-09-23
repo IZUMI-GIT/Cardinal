@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {z} from 'zod';
 import { useSignupMutation } from "../../api/apiSlice";
 
-const Register = () => {
+const RegisterModal = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
@@ -97,7 +97,7 @@ const Register = () => {
                     </button>
                     <label className="text-sm  text-gray-400">
                         Already have an account?
-                        <Link to="/login" className="text-blue-400"> SignIn</Link>
+                        <Link to="/username" className="text-blue-400"> SignIn</Link>
                     </label>
                 </form>
             </div>
@@ -106,4 +106,4 @@ const Register = () => {
 }
 
 
-export default Register;
+export default RegisterModal;

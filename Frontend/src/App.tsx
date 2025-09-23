@@ -9,7 +9,7 @@ import { clearAuth, setAuthStatus, setAuthUser } from "./components/auth/authSli
 import { WrapperRoute } from "./routes/WrapperRoute"
 const Home = lazy(() => import('./components/Home'))
 const Board = lazy(() => import('./components/boards/Board'))
-const Register = lazy(() => import('./components/auth/Register'))
+const RegisterModal = lazy(() => import('./components/auth/RegisterModal'))
 const LoginModal = lazy(() =>  import('./components/auth/LogInModal'))
 import { useAppDispatch } from './app/hooks'
 
@@ -74,7 +74,7 @@ function App() {
           <Route path="/boards" element={<Board />} />
         </Route>
         <Route path="/" element={<Home />} />
-        <Route path='/register' element={<Register />} />
+        <Route path='/register' element={<RegisterModal />} />
         <Route path='/login' element={<LoginModal />} />
       </Routes>
       </BrowserRouter>

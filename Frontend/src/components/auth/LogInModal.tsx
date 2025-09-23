@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation } from "../../api/apiSlice";
 
 export default function LogInModal () {
-    // const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('')
