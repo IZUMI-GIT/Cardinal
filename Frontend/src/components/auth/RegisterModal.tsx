@@ -33,14 +33,18 @@ const RegisterModal = () => {
             return alert("enter details correctly")
         }
 
-        const result = await signup({
-            name,
-            email,
-            password
-        })
-
-        if(!result.error){
-            navigate('/boards')
+        try{
+            const result = await signup({
+                name,
+                email,
+                password
+            })
+        
+            if(!result.error){
+                navigate('/boards')
+            }
+        }catch{
+            
         }
     }
 
