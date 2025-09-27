@@ -44,7 +44,7 @@ jobs:
 
       - name: Prisma generate
         working-directory: ./Backend
-        run: cd ../prisma && npx prisma generate && cd ..
+        run: cd prisma && npx prisma generate && cd ..
 
       - name: Build Backend
         working-directory: ./Backend

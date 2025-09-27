@@ -2,8 +2,8 @@ import { useState } from "react"
 import z from "zod";
 import { useUsernameMutation } from "../../api/apiSlice";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../app/hooks";
-import { userData } from "./authSlice";
+// import { useAppSelector } from "../../app/hooks";
+// import { userData } from "./authSlice";
 
 export default function UsernameModal () {
     const [username, setUsername] = useState("");
@@ -24,13 +24,13 @@ export default function UsernameModal () {
         }
 
         try{
-            const result = await usernameValue({
-                email,
-                username
-            })
-            if(!result.error){
-                navigate('/boards')
-            }
+            // const result = await usernameValue({
+            //     email,
+            //     username
+            // // })
+            // if(!result.error){
+            //     navigate('/boards')
+            // }
         }catch{
 
         }
