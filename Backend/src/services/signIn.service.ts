@@ -86,7 +86,7 @@ export const signInService = async ({email, password, userAgent, userIP}: SignIn
                     return {statusCode: 400, message: "enter correct credentials"}
                 }
             }catch{
-                return {statusCode: 500, message: "Internal Error"}
+                return {statusCode: 500, message: "SignIn Internal Error"}
             }
         }
 

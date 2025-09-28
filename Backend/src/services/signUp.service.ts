@@ -1,18 +1,21 @@
 import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
-// import { config } from "../config/config";
-// import dotenv from "dotenv";
-// dotenv.config();
+import jwt from "jsonwebtoken";
+import { config } from '../config/config';
+import { v4 as uuidv4 } from 'uuid';
+
 const prisma = new PrismaClient();
 interface SignUp {
     name: string,
     email: string,
     password: string,
-    username: string
+    username: string,
+    userAgent: string,
+    userIP: string
 }
 
-// const SECRET_KEY = config.SECRET_KEY;
+const SECRET_KEY = config.SECRET_KEY;
 // const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET; 
 
 export const signupService = async (details : SignUp)  => {
@@ -58,10 +61,32 @@ export const signupService = async (details : SignUp)  => {
                     }
                 })
 
+                const jwToken = jwt.sign({
+                    email: newUser.email,
+                    role: newUser.role,
+                    id: newUser.id
+                }, SECRET_KEY)
+
+                const refreshToken = uuidv4();
+                const d = new Date();
+                d.setDate(d.getDate() + 7);
+
+                await prisma.session.create({
+                    data: {
+                        userId: newUser.id,
+                        refreshToken,
+                        userAgent: details.userAgent,
+                        expiredAt: d,
+                        ipAddress: details.userIP
+                    }
+                })
+
                 return {
                     statusCode : 201,
                     message: "user created successfully",
-                    newUser
+                    user: newUser,
+                    access_token: jwToken,
+                    refresh_token: refreshToken
                 }
 
                 //JWT token assignment in SignIn controller/service file
@@ -89,9 +114,56 @@ export const signupService = async (details : SignUp)  => {
                 // }
 
             }catch{
-                return {statusCode: 500, message : "Internal Error"}
+                return {statusCode: 500, message : "SignUp Internal Error"}
             }
         }
     }
 
+}
+
+
+export const usernameService = async (userId: number, email: string, username: string) => {
+
+    const usernameSchema = z.object({
+        userId: z.number(),
+        email: z.email(),
+        username: z.string()
+    })
+
+    const schemaResponse = usernameSchema.safeParse({
+        userId,
+        email,
+        username
+    })
+
+    if(!schemaResponse.success){
+        return {statusCode: 404, message: "Invalid username"};
+    }
+    const IdCheck = await prisma.user.findUnique({
+        where: {
+            id: userId
+        }
+    })
+
+    if(!IdCheck){
+        return {statusCode: 400, message: "enter correct email"}
+    }
+
+    try{
+        const newUsername = await prisma.user.update({
+            where: {
+                email
+            },
+            data: {
+                userName : username
+            }
+        })
+
+        return{
+            statusCode: 201,
+            message: `username created: ${newUsername.userName}`
+        }
+    }catch{
+        return {statusCode: 500, message: "Internal error"}
+    }
 }

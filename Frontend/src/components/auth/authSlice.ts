@@ -48,7 +48,7 @@ const authSlice = createSlice({
 
 export const { setAuthUser, clearAuth, setAuthStatus, setAuthError } = authSlice.actions;
 export default authSlice.reducer;
-
+//here 's' means state.
 export const userData = (s: {auth: Auth}) => s.auth.user;
 export const isUserAuthenticated = (s: {auth: Auth}) => s.auth.status === 'authenticated' && s.auth.user != null
 export const authStatus = (s: {auth: Auth}) => s.auth.status;

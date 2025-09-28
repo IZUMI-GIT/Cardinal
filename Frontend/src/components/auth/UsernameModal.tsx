@@ -2,21 +2,22 @@ import { useState } from "react"
 import z from "zod";
 import { useUsernameMutation } from "../../api/apiSlice";
 import { useNavigate } from "react-router-dom";
-// import { useAppSelector } from "../../app/hooks";
-// import { userData } from "./authSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { userData } from "./authSlice";
 
 export default function UsernameModal () {
     const [username, setUsername] = useState("");
     const navigate = useNavigate();
 
     const [usernameValue] = useUsernameMutation();
+    // const dispatch = useAppDispatch()
+    const currentUser = useAppSelector(userData)
     
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
         const usernameSchema = z.string();
-
         const schemaResponse = usernameSchema.safeParse(username);
 
         if(!schemaResponse.success){
@@ -24,13 +25,17 @@ export default function UsernameModal () {
         }
 
         try{
-            // const result = await usernameValue({
-            //     email,
-            //     username
-            // // })
-            // if(!result.error){
-            //     navigate('/boards')
-            // }
+            const email = currentUser?.email;
+            if(email === undefined){
+                throw new Error("UserData faulty");
+            }
+            const result = await usernameValue({
+                email,
+                username
+            })
+            if(!result.error){
+                navigate('/boards')
+            }
         }catch{
 
         }
