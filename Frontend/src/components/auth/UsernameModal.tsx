@@ -10,7 +10,6 @@ export default function UsernameModal () {
     const navigate = useNavigate();
 
     const [usernameValue] = useUsernameMutation();
-    // const dispatch = useAppDispatch()
     const currentUser = useAppSelector(userData)
     
 
@@ -54,6 +53,7 @@ export default function UsernameModal () {
                         value={username} placeholder="type username"
                         onChange={(e) => {setUsername(e.target.value)}}
                     />
+                    <button type="submit">Save</button>
                 </form>
             </div>
         </div>

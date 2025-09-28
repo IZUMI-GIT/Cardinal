@@ -19,7 +19,6 @@ const SECRET_KEY = config.SECRET_KEY;
 // const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET; 
 
 export const signupService = async (details : SignUp)  => {
-    // console.log("Entered here")
 
     const signupSchema = z.object({
         email : z.email(),

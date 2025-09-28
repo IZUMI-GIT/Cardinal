@@ -45,5 +45,4 @@ export const postSignIn = async (req: Request, res: Response, next: NextFunction
     }catch(e){
         return next(new AppError("Not Signed In", 500))
     }
-
 }
