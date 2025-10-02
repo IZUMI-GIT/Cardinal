@@ -3,7 +3,7 @@ import { createSlice, type PayloadAction,  } from "@reduxjs/toolkit";
 export interface User {
     id: number,
     email: string,
-    username: string,
+    username?: string,
     role?: string
 }
 
@@ -41,12 +41,17 @@ const authSlice = createSlice({
         setAuthError(state, action: PayloadAction<Auth['error']>) {
             state.status = 'error';
             state.error = action.payload
+        },
+        setAuthUsername(state, action:PayloadAction<User["username"]>){
+            if(state.user){
+                state.user.username = action.payload;
+            }
         }
     }
 
 })
 
-export const { setAuthUser, clearAuth, setAuthStatus, setAuthError } = authSlice.actions;
+export const { setAuthUser, clearAuth, setAuthStatus, setAuthError, setAuthUsername } = authSlice.actions;
 export default authSlice.reducer;
 //here 's' means state.
 export const userData = (s: {auth: Auth}) => s.auth.user;

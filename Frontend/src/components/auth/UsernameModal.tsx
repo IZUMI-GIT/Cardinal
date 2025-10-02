@@ -3,11 +3,12 @@ import z from "zod";
 import { useUsernameMutation } from "../../api/apiSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { userData } from "./authSlice";
+import { setAuthUsername, userData } from "./authSlice";
 
 export default function UsernameModal () {
     const [username, setUsername] = useState("");
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const [usernameValue] = useUsernameMutation();
     const currentUser = useAppSelector(userData)
@@ -32,7 +33,8 @@ export default function UsernameModal () {
                 email,
                 username
             })
-            if(!result.error){
+            if(result.data){
+                dispatch(setAuthUsername(result.data.username))
                 navigate('/boards')
             }
         }catch{
