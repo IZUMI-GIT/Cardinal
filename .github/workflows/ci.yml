@@ -22,14 +22,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: Backend/package-lock.json
 
-      # - name: Debug repo layout (backend)
-      #   run: |
-      #     echo "pwd: $(pwd)"
-      #     ls -la
-      #     echo "Backend folder:"
-      #     ls -la Backend || true
-      #     git ls-files | grep package-lock.json || true
-
       - name: Install backend dependencies (ci, fallback to install)
         working-directory: ./Backend
         run: npm ci
@@ -64,14 +56,6 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: Frontend/package-lock.json
-
-      # - name: Debug repo layout (frontend)
-      #   run: |
-      #     echo "pwd: $(pwd)"
-      #     ls -la
-      #     echo "Frontend folder:"
-      #     ls -la Frontend || true
-      #     git ls-files | grep package-lock.json || true
 
       - name: Install frontend dependencies (ci, fallback to install)
         working-directory: ./Frontend

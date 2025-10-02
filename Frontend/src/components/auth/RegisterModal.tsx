@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {z} from 'zod';
 import { useSignupMutation } from "../../api/apiSlice";
+import { useAppDispatch } from "../../app/hooks";
+import { setAuthUser } from "./authSlice";
 
 const RegisterModal = () => {
 
@@ -10,7 +12,8 @@ const RegisterModal = () => {
     const [name, setName] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const signUpSchema = z.object({
         name: z.string(),
@@ -40,11 +43,12 @@ const RegisterModal = () => {
                 password
             })
         
-            if(!result.error){
+            if(result.data){
+                dispatch(setAuthUser(result.data))
                 navigate('/boards')
             }
         }catch{
-            
+            console.log("User registration not successful")
         }
     }
 

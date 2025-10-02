@@ -38,7 +38,7 @@ export default function UsernameModal () {
                 navigate('/boards')
             }
         }catch{
-
+            console.log("Username not successful")
         }
         
     }
