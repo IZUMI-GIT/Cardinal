@@ -1,12 +1,12 @@
 
 export class AppError extends Error {
-    [x: string]: unknown;
     statusCode: number;
     isOperational: boolean;
 
     constructor(message: string, statusCode: number){
         super(message);
         // super(statusCode)
+        this.name = "AppError";
         this.statusCode = statusCode || 500;
         this.isOperational = true;
         // console.log("statusCode AppError:", statusCode)

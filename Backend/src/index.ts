@@ -6,6 +6,7 @@ import { errorHandler } from './middlewares/errorHandling.middleware';
 import authRouter from './routes/auth.routes';
 import { authMiddleware } from './middlewares/auth.middleware';
 
+
 const app = express();
 const port = 3000;
 

@@ -2,12 +2,15 @@ import React, { useState } from "react"
 import {z} from 'zod'
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation } from "../../api/apiSlice";
+import { useAppDispatch } from "../../app/hooks";
+import { setAuthUser } from "./authSlice";
 
 export default function LogInModal () {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
+    const dispatch = useAppDispatch();
 
 
     const loginSchema = z.object({
@@ -37,7 +40,8 @@ export default function LogInModal () {
             const result = await login({email, password});
             console.log(result)
 
-            if(!result.error){
+            if(result.data){
+                dispatch(setAuthUser(result.data))
                 navigate('/boards')
             }
         }catch{

@@ -105,7 +105,7 @@ const RegisterModal = () => {
                     </button>
                     <label className="text-sm  text-gray-400">
                         Already have an account?
-                        <Link to="/username" className="text-blue-400"> SignIn</Link>
+                        <Link to="/login" className="text-blue-400"> SignIn</Link>
                     </label>
                 </form>
             </div>
