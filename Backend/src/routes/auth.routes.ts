@@ -1,13 +1,15 @@
 import { Router } from "express";
-import { postSignup } from "../controllers/signUp.controller";
+import { patchUsername, postSignup } from "../controllers/signUp.controller";
 import { postRefreshToken } from "../controllers/refreshToken.controller";
 import { postSignIn } from "../controllers/signIn.controller";
 import { postLogout } from "../controllers/logOut.controller";
-const router = Router();
+import { authMiddleware } from "../middlewares/auth.middleware";
+const router = Router({mergeParams: true});
 
 router.post("/signup", postSignup);
+router.patch("/signup/:id", patchUsername)
 router.post("/refresh", postRefreshToken)
 router.post("/signin", postSignIn);
-router.post("/logout", postLogout);
+router.post("/logout", authMiddleware, postLogout);
 
 export default router
