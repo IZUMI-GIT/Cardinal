@@ -129,6 +129,7 @@ export const usernameService = async ( username: string) => {
         username
     )
 
+
     if(!schemaResponse.success){
         return {statusCode: 404, message: "Invalid username"};
     }
@@ -136,6 +137,7 @@ export const usernameService = async ( username: string) => {
     try{
         const newUsername = await prisma.user.findUnique({
             where: {
+
                 userName : username
             }
         })

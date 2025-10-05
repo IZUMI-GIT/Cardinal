@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import { Link, useNavigate } from "react-router-dom";
 import {z} from 'zod';
 import { useSignupMutation } from "../../api/apiSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { setAuthUser } from "./authSlice";
 import axios from "axios";
+
 
 const RegisterModal = () => {
 
@@ -14,6 +16,7 @@ const RegisterModal = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [username, setUsername] = useState("");
     const [usernameExist, setUsernameExist] = useState(false);
+
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -73,6 +76,7 @@ const RegisterModal = () => {
         })
 
         if(!schemaResponse.success){
+
             return alert("enter details correctly")
         }
 
@@ -82,6 +86,7 @@ const RegisterModal = () => {
                 email,
                 password,
                 username
+
             })
         
             if(result.data){
@@ -90,6 +95,7 @@ const RegisterModal = () => {
             }
         }catch{
             console.error("User registration not successful")
+
         }
     }
 
