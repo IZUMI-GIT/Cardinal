@@ -24,16 +24,6 @@ export const apiSlice = createApi({
                 }
             })
         }),
-        username: builder.mutation<User,{email: string, username: string}>({
-            query: ({email, username}) => ({
-                url: '/username',
-                method: 'PATCH',
-                body: {
-                    email,
-                    username
-                }
-            })
-        }),
         login: builder.mutation<{message: string, user:{id: number, email: string, role: 'USER' | 'ADMIN', userName : string}}, {email: string, password: string}>({
             query: ({email, password}) => ({
                 url: '/signin',
@@ -66,7 +56,6 @@ export const {
     useMeQuery,
     useLoginMutation,
     useSignupMutation,
-    useUsernameMutation,
     useRefreshMutation,
     useLogoutMutation
 } = apiSlice

@@ -11,5 +11,6 @@ router.get("/username/:username", getUsername)
 router.post("/refresh", postRefreshToken)
 router.post("/signin", postSignIn);
 router.post("/logout", authMiddleware, postLogout);
+router.get("/me", getMeUser);
 
 export default router
