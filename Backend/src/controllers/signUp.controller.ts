@@ -27,7 +27,6 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
 
 
     const signupResponse = await signupService(details);
-    console.log("signupResponse :" , signupResponse.statusCode)
 
     if(!signupResponse){
             return next(new AppError("Sign-In service failed to respond", 501))
@@ -75,25 +74,22 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
 }
 
 
-export const patchUsername = async (req: Request, res: Response, next: NextFunction) => {
+export const getUsername = async (req: Request, res: Response, next: NextFunction) => {
 
     try{
-        const userId: number = parseInt(req.params.id);
-        const {email, username}: {
-            email: string,
-            username: string
-        } = req.body
+        const username: string = req.params.username;
 
-        const usernameResponse = await usernameService(userId, email, username);
+        const usernameResponse = await usernameService(username);
 
-        if(usernameResponse.statusCode !== 201){
-            return next( new AppError(usernameResponse.message, usernameResponse.statusCode))
-        }
+        // if(usernameResponse.statusCode !== 204){
+        //     return next( new AppError(usernameResponse.message, usernameResponse.statusCode))
+        // }
 
         return res.status(usernameResponse.statusCode).json({
-            message : usernameResponse.message
+            message : usernameResponse.message,
+            exists: usernameResponse.exists
         })
     }catch{
-        return next(new AppError("Username not updated", 500))
+        return next(new AppError("Username internal error", 500))
     }
 }

@@ -12,14 +12,15 @@ export const apiSlice = createApi({
             query: () => "/me",
             providesTags: ['User']
         }),
-        signup: builder.mutation<User, {name: string, email: string, password: string}>({
-            query: ({name, email, password}) => ({
+        signup: builder.mutation<User, {name: string, email: string, password: string, username: string}>({
+            query: ({name, email, password, username}) => ({
                 url: '/signup',
                 method: 'POST',
                 body: {
                     name,
                     email,
-                    password
+                    password,
+                    username
                 }
             })
         }),

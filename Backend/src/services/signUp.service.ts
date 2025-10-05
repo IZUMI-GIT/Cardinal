@@ -121,48 +121,39 @@ export const signupService = async (details : SignUp)  => {
 }
 
 
-export const usernameService = async (userId: number, email: string, username: string) => {
+export const usernameService = async ( username: string) => {
 
-    const usernameSchema = z.object({
-        userId: z.number(),
-        email: z.email(),
-        username: z.string()
-    })
+    const usernameSchema = z.string()
 
-    const schemaResponse = usernameSchema.safeParse({
-        userId,
-        email,
+    const schemaResponse = usernameSchema.safeParse(
         username
-    })
+    )
 
     if(!schemaResponse.success){
         return {statusCode: 404, message: "Invalid username"};
     }
-    const IdCheck = await prisma.user.findUnique({
-        where: {
-            id: userId
-        }
-    })
-
-    if(!IdCheck){
-        return {statusCode: 400, message: "enter correct email"}
-    }
 
     try{
-        const newUsername = await prisma.user.update({
+        const newUsername = await prisma.user.findUnique({
             where: {
-                email
-            },
-            data: {
                 userName : username
             }
         })
 
-        return{
-            statusCode: 201,
-            message: `username created: ${newUsername.userName}`
+        if(newUsername){
+            return {
+                statusCode: 200,
+                message: "exists",
+                exists : true
+            }
+        }else{
+            return {
+                statusCode: 200,
+                message: "username doesn't exists",
+                exists: false
+            }
         }
     }catch{
-        return {statusCode: 500, message: "Internal error"}
+        return {statusCode: 500, message: "Username-Internal error"}
     }
 }
