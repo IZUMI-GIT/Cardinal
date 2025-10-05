@@ -11,6 +11,9 @@ export const Appbar = () => {
     const isAuth = useAppSelector(isUserAuthenticated);
     const status = useAppSelector(authStatus);
 
+
+
+
     if(status === "loading"){
         return <Spinner />
     }

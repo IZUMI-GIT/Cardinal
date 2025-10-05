@@ -3,7 +3,8 @@ import {z} from 'zod'
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation } from "../../api/apiSlice";
 import { useAppDispatch } from "../../app/hooks";
-import { setAuthUser } from "./authSlice";
+import { setAuthUser, type User } from "./authSlice";
+import { store } from "../../app/store";
 
 export default function LogInModal () {
 
@@ -38,11 +39,31 @@ export default function LogInModal () {
         
         try{
             const result = await login({email, password});
-            console.log(result)
 
-            if(result.data){
-                dispatch(setAuthUser(result.data))
+            const userData = result.data?.user;
+            const authData = {
+                id: userData?.id,
+                email: userData?.email,
+                username: userData?.userName,
+                role: userData?.role
+            }
+            
+
+            const userSchema = z.object({
+                id: z.number(),
+                email: z.email(),
+                username: z.string(),
+                role : z.string()
+            })
+
+            const userSchemaResponse = userSchema.safeParse(authData)
+
+            if(userSchemaResponse.success){
+                dispatch(setAuthUser(authData as User))
+                console.log("Redux auth after dispatch:", store.getState().auth);
                 navigate('/boards')
+            }else{
+                console.error("userData is wrong @LoginModal")
             }
         }catch{
             console.log("Login not successful")

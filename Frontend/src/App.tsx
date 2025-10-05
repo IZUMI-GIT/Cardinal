@@ -11,7 +11,6 @@ const Home = lazy(() => import('./components/Home'))
 const Board = lazy(() => import('./components/boards/Board'))
 const RegisterModal = lazy(() => import('./components/auth/RegisterModal'))
 const LoginModal = lazy(() =>  import('./components/auth/LogInModal'))
-const UsernameModal = lazy(() => import('./components/auth/UsernameModal'))
 import { useAppDispatch } from './app/hooks'
 
 
@@ -76,7 +75,6 @@ function App() {
           {/* <Route path='/username' element={<UsernameModal />} /> */}
         </Route>
         <Route path="/" element={<Home />} />
-        <Route path='/username' element={<UsernameModal />} />
         <Route path='/register' element={<RegisterModal />} />
         <Route path='/login' element={<LoginModal />} />
       </Routes>

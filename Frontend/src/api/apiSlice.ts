@@ -34,7 +34,7 @@ export const apiSlice = createApi({
                 }
             })
         }),
-        login: builder.mutation<User, {email: string, password: string}>({
+        login: builder.mutation<{message: string, user:{id: number, email: string, role: 'USER' | 'ADMIN', userName : string}}, {email: string, password: string}>({
             query: ({email, password}) => ({
                 url: '/signin',
                 method: 'POST',
