@@ -15,7 +15,7 @@ export const Appbar = () => {
         return <Spinner />
     }
 
-    if(!isAuth){
+    if(!isAuth || status === 'idle'){
 
         return(
             <div className="space-y">
@@ -33,7 +33,7 @@ export const Appbar = () => {
     }else{
         return(
             <>
-                Page Logo
+                <img src={logo} width={40} height={40} onClick={() => navigate('/')} />
                 <Logout />
             </>
         )

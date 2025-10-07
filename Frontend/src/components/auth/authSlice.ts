@@ -15,7 +15,7 @@ export interface Auth {
 }
 
 const initialState: Auth = {
-    status: 'idle',
+    status: 'loading',
     user: null,
     error: null,
     lastCheckedAt: null

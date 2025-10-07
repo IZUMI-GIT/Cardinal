@@ -12,7 +12,7 @@ export const setAuthCookies = async (res: Response, tokens: {access_token: strin
         sameSite: 'lax',
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production,
-        maxAge : 10*1000    //15 minutes
+        maxAge : 15*60*1000    //15 minutes
         })
 
         res.cookie('refreshToken', tokens.refresh_token, {

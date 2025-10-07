@@ -12,13 +12,9 @@ export const WrapperRoute = () => {
         return <Spinner />
     }
 
-    console.log("isAuth :", isAuth)
     if(!isAuth){
-        console.log(isAuth)
-        console.log("coming")
         return <Navigate to="/login" replace />
     }else{
-        console.log("Came here")
         return <Outlet />
 
     }
