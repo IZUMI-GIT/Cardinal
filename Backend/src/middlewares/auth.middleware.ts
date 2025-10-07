@@ -17,7 +17,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
     try{
         const access_token = req.cookies.accessToken;
-        const refresh_token = req.cookies.refreshToken;
+        // const refresh_token = req.cookies.refreshToken;
 
         if(!access_token) return next(new AppError('access token missing', 401));
 
