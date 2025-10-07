@@ -7,6 +7,10 @@ import { useAppDispatch } from "../../app/hooks";
 import { setAuthUser } from "./authSlice";
 import axios from "axios";
 
+type Debounced<Args extends unknown[]> = {
+  (...args: Args): void;
+  cancel: () => void;
+};
 
 const RegisterModal = () => {
 
@@ -32,15 +36,30 @@ const RegisterModal = () => {
     const checkRef = useRef<((value: string) => void) | null>(null);
 
     useEffect(() => {
-        function debounce<T extends (...args: any[]) => void>(cb: T, delay:number=1000){
-            let timeout : ReturnType<typeof setTimeout> | null = null;
-            return (...args: Parameters<T>) => {
-                if(timeout) clearTimeout(timeout);
-                timeout = setTimeout(() => cb(...args), delay);
-            };
+        function debounce<Args extends unknown[], R = unknown>(
+            cb: (...args: Args) => R,
+            delay = 1000
+            ): Debounced<Args> {
+                let timeout: ReturnType<typeof setTimeout> | null = null;
+                const run = (...args: Args): void => {
+                if (timeout) clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                void cb(...args); // ignore Promise or return value
+                timeout = null;
+            }, delay);
+        };
+
+        run.cancel = () => {
+            if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+            }
+        };
+
+        return run as Debounced<Args>;
         }
 
-        checkRef.current = debounce(async (value: string) => {
+        checkRef.current = debounce(async (value : string) => {
             if(!value){
                 setUsernameExist(false);
                 return;
@@ -49,8 +68,6 @@ const RegisterModal = () => {
             try{
                 if (!value || !value.trim()) return;
                 const u = encodeURIComponent(value.trim());
-                // console.log('calling', `http://localhost:3000/v1/username/${u}`);
-                // console.log('will call username check ->', encodeURIComponent(value));
                 const res = await axios.get(`http://localhost:3000/v1/username/${u}`);
                 setUsernameExist(Boolean(res.data.exists));
             }catch(err){
