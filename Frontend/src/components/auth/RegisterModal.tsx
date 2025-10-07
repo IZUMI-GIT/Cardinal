@@ -40,12 +40,12 @@ const RegisterModal = () => {
             cb: (...args: Args) => R,
             delay = 1000
             ): Debounced<Args> {
-                let timeout: ReturnType<typeof setTimeout> | null = null;
-                const run = (...args: Args): void => {
-                if (timeout) clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                void cb(...args); // ignore Promise or return value
-                timeout = null;
+            let timeout: ReturnType<typeof setTimeout> | null = null;
+            const run = (...args: Args): void => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+            void cb(...args); // ignore Promise or return value
+            timeout = null;
             }, delay);
         };
 
@@ -80,8 +80,9 @@ const RegisterModal = () => {
         e.preventDefault();
         const val = e.target.value;
         setUsername(val);
-        checkRef.current && checkRef.current(val);
-        if (username) checkRef.current?.(username);
+        if (checkRef.current) {
+        checkRef.current(val);
+        }
     }
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
