@@ -81,6 +81,7 @@ const RegisterModal = () => {
         const val = e.target.value;
         setUsername(val);
         checkRef.current && checkRef.current(val);
+        if (username) checkRef.current?.(username);
     }
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
