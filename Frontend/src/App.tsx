@@ -11,7 +11,6 @@ const Home = lazy(() => import('./components/Home'))
 const Board = lazy(() => import('./components/boards/Board'))
 const RegisterModal = lazy(() => import('./components/auth/RegisterModal'))
 const LoginModal = lazy(() =>  import('./components/auth/LogInModal'))
-const UsernameModal = lazy(() => import('./components/auth/UsernameModal'))
 import { useAppDispatch } from './app/hooks'
 
 
