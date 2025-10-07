@@ -5,14 +5,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 const SECRET_KEY = config.SECRET_KEY;
 
-declare global {
-    namespace Express {
-        interface Request {
-            userId? : number;
-        }
-    }
-}
-
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
     try{
