@@ -11,14 +11,12 @@ export const Appbar = () => {
     const isAuth = useAppSelector(isUserAuthenticated);
     const status = useAppSelector(authStatus);
 
-
-
-
     if(status === "loading"){
         return <Spinner />
     }
 
     if(!isAuth){
+
         return(
             <div className="space-y">
                 <img src={logo} width={40} height={40} onClick={() => navigate('/')}/>
@@ -30,7 +28,6 @@ export const Appbar = () => {
                     onClick={() => navigate('/register')}>
                         Register
                 </button>
-
             </div>
         ) 
     }else{

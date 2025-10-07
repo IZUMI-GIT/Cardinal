@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useRef } from 'react'
 import './App.css'
 import Spinner from './features/Spinner'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
@@ -18,13 +18,13 @@ function App() {
 
   const dispatch = useAppDispatch();
 
-  const {
-    data: me,
-    isSuccess : meSucces,
-    isError : meError,
-    error: meErrorObj,
-    refetch
-  } = useMeQuery();
+    const {
+      data: me,
+      isSuccess : meSucces,
+      isError : meError,
+      error: meErrorObj,
+      refetch
+    } = useMeQuery();
 
   const [refresh] = useRefreshMutation();
 
@@ -43,26 +43,30 @@ function App() {
     }
   }, [me, meSucces, dispatch])
 
-  useEffect(() => {
-    if(meError && (meErrorObj as FetchBaseQueryError).status ===  401){
-      let cancelled = false;
-      (async () => {
-        try{
-          await refresh().unwrap();
-          if(!cancelled){
-            await refetch();
-          }
-        }catch{
-          if(!cancelled){
-            dispatch(clearAuth())
-            dispatch(setAuthStatus("unauthenticated"))
-          }
-        }
-      })();
-      return () => {cancelled = true};
-    }
+  const refreshAttemptedRef = useRef(false);
 
-  },[meError, meErrorObj, refresh, refetch, dispatch])
+useEffect(() => {
+  const status = (meErrorObj as FetchBaseQueryError)?.status;
+
+  if (meError && status === 401 && !refreshAttemptedRef.current) {
+    refreshAttemptedRef.current = true; // one-shot guard
+    let cancelled = false;
+
+    (async () => {
+      try {
+        await refresh().unwrap();
+        if (!cancelled) await refetch();
+      } catch {
+        if (!cancelled) {
+          dispatch(clearAuth());
+          dispatch(setAuthStatus("unauthenticated"));
+        }
+      }
+    })();
+
+    return () => { cancelled = true };
+  }
+}, [meError, meErrorObj, refresh, refetch, dispatch]);
 
       
 

@@ -18,7 +18,7 @@ const Logout = () => {
 
             if(result.data){
                 dispatch(clearAuth());
-                navigate('/home');
+                navigate('/');
             }
         }catch{
             console.log("Logout failed")
@@ -26,7 +26,7 @@ const Logout = () => {
     }
 
     return(
-        <button className="px-3 py-2 rounded-lg focus:outline-none hover:bg-black focus:ring-2 focus:ring-black"
+        <button className="px-3 py-2 rounded-lg focus:outline-none focus:text-white hover:bg-black focus:ring-2 focus:ring-black"
             onClick={handleSignOut}>
             Logout
         </button>

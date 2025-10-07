@@ -57,7 +57,7 @@ export const refreshService = async (token : string, userAgent : string) => {
             ])
 
             return {
-                statusCode : 201,
+                statusCode : 200,
                 message : "tokens are created",
                 access_token : jwToken,
                 refresh_token : refresh_token

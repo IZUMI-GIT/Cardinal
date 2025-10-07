@@ -9,14 +9,17 @@ export const WrapperRoute = () => {
     const status = useAppSelector(authStatus);
 
     if(status === "loading"){
-        return (
-            <Spinner />
-        )
+        return <Spinner />
     }
 
-    if (!isAuth){
+    console.log("isAuth :", isAuth)
+    if(!isAuth){
+        console.log(isAuth)
+        console.log("coming")
         return <Navigate to="/login" replace />
-    }
+    }else{
+        console.log("Came here")
+        return <Outlet />
 
-    return <Outlet />
+    }
 }
