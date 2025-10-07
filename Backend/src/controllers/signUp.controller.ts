@@ -91,5 +91,6 @@ export const getUsername = async (req: Request, res: Response, next: NextFunctio
         })
     }catch{
         return next(new AppError("Username internal error", 500))
+
     }
 }

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getUsername, postSignup } from "../controllers/signUp.controller";
+
 import { postRefreshToken } from "../controllers/refreshToken.controller";
 import { postSignIn } from "../controllers/signIn.controller";
 import { postLogout } from "../controllers/logOut.controller";
@@ -26,5 +27,6 @@ router.get('/me', authMiddleware, async (req, res) => {
         }
     });
 });
+
 
 export default router
