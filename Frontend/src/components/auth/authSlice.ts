@@ -15,7 +15,7 @@ export interface Auth {
 }
 
 const initialState: Auth = {
-    status: 'idle',
+    status: 'loading',
     user: null,
     error: null,
     lastCheckedAt: null
@@ -55,5 +55,5 @@ export const { setAuthUser, clearAuth, setAuthStatus, setAuthError, setAuthUsern
 export default authSlice.reducer;
 //here 's' means state.
 export const userData = (s: {auth: Auth}) => s.auth.user;
-export const isUserAuthenticated = (s: {auth: Auth}) => s.auth.status === 'authenticated' && s.auth.user != null
+export const isUserAuthenticated = (s: {auth: Auth}) => (s.auth.status === 'authenticated' && s.auth.user != null)
 export const authStatus = (s: {auth: Auth}) => s.auth.status;

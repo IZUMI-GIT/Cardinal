@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { refreshService } from "../services/refresh.service";
 import { AppError } from "../utils/AppError";
+import { setAuthCookies } from "../helpers/setAuthCookies";
 
 export const postRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     
@@ -13,39 +14,42 @@ export const postRefreshToken = async (req: Request, res: Response, next: NextFu
     console.log("refreshToken:", refreshToken)
 
     if(!refreshToken){
-        return next(new AppError("no refresh token", 403))
+        return next(new AppError("no refresh token", 401))
     }else{
-        const refreshResponse = await refreshService(refreshToken, userAgent);
-        if(refreshResponse.statusCode === 201){
-    
-            // Assuming the token and user are returned in the response
-            const { access_token, refresh_token, statusCode, message } = refreshResponse;
-            // Set the token in the response header
-            res.cookie('accessToken', access_token, {
-                sameSite: 'lax',
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production', // Use secure cookies in production,
-                maxAge : 15*60*1000    //15 minutes
-            })
-    
-            res.cookie('refreshToken', refresh_token, {
-                sameSite: 'lax',
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                maxAge : 7*24*60*60*1000    //7 days
-            } )
-    
-            return res.status(statusCode).json({
-                message,
-                access_token
-            })
-        }else{
-            // return res.status(refreshResponse.statusCode).json({
-            //     message : refreshResponse.message
-            // })
-    
-            return next(new AppError(refreshResponse.message, refreshResponse.statusCode))
+        try{
+            const refreshResponse = await refreshService(refreshToken, userAgent);
+            if(refreshResponse.statusCode === 200){
+        
+                // Assuming the token and user are returned in the response
+                const { access_token, refresh_token, statusCode, message } = refreshResponse;
+                // Set the token in the response header
+
+                if(!access_token || !refresh_token){
+                    return next(new AppError("token missing", 500))
+                }
+
+                const tokens = {
+                    access_token,
+                    refresh_token
+                }
+
+                await setAuthCookies(res, tokens)
+        
+                return res.status(statusCode).json({
+                    message
+                })
+            }else{
+                // return res.status(refreshResponse.statusCode).json({
+                //     message : refreshResponse.message
+                // })
+        
+                return next(new AppError(refreshResponse.message, refreshResponse.statusCode))
+            }   
+        }catch(err: unknown){
+            console.error(err);
+            return next(new AppError("refresh token failed", 401))
         }
+
     }
     
 }

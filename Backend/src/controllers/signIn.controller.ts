@@ -41,7 +41,8 @@ export const postSignIn = async (req: Request, res: Response, next: NextFunction
         }
 
         await setAuthCookies(res, tokens)
-        return res.status(200).json({ message, access_token, user });
+        return res.status(200).json({ message, user });
+
     }catch{
         return next(new AppError("Not Signed In", 500))
     }

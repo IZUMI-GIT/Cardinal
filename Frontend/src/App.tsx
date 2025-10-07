@@ -1,31 +1,35 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useRef } from 'react'
 import './App.css'
 import Spinner from './features/Spinner'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { useEffect } from "react"
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 import { useMeQuery, useRefreshMutation } from "./api/apiSlice"
-import { clearAuth, setAuthStatus, setAuthUser } from "./components/auth/authSlice"
+import { clearAuth, isUserAuthenticated, setAuthStatus, setAuthUser } from "./components/auth/authSlice"
 import { WrapperRoute } from "./routes/WrapperRoute"
 const Home = lazy(() => import('./components/Home'))
 const Board = lazy(() => import('./components/boards/Board'))
 const RegisterModal = lazy(() => import('./components/auth/RegisterModal'))
 const LoginModal = lazy(() =>  import('./components/auth/LogInModal'))
-const UsernameModal = lazy(() => import('./components/auth/UsernameModal'))
-import { useAppDispatch } from './app/hooks'
+import { useAppDispatch, useAppSelector } from './app/hooks'
 
 
 function App() {
 
   const dispatch = useAppDispatch();
+  const isAuth = useAppSelector(isUserAuthenticated);
 
-  const {
-    data: me,
-    isSuccess : meSucces,
-    isError : meError,
-    error: meErrorObj,
-    refetch
-  } = useMeQuery();
+  // useEffect(() => {
+  //   dispatch(setAuthStatus('loading'))
+  // }, [dispatch])
+
+    const {
+      data: me,
+      isSuccess : meSucces,
+      isError : meError,
+      error: meErrorObj,
+      refetch
+    } = useMeQuery();
 
   const [refresh] = useRefreshMutation();
 
@@ -44,28 +48,31 @@ function App() {
     }
   }, [me, meSucces, dispatch])
 
+  const refreshAttemptedRef = useRef(false);
+
   useEffect(() => {
-    if(meError && (meErrorObj as FetchBaseQueryError).status ===  401){
+    const status = (meErrorObj as FetchBaseQueryError)?.status;
+
+    if (meError && status === 401 && !refreshAttemptedRef.current) {
+      refreshAttemptedRef.current = true; // one-shot guard
       let cancelled = false;
+
       (async () => {
-        try{
+        try {
           await refresh().unwrap();
-          if(!cancelled){
-            await refetch();
-          }
-        }catch{
-          if(!cancelled){
-            dispatch(clearAuth())
-            dispatch(setAuthStatus("unauthenticated"))
+          if (!cancelled) await refetch();
+        } catch {
+          if (!cancelled) {
+            dispatch(clearAuth());
+            dispatch(setAuthStatus("unauthenticated"));
           }
         }
       })();
-      return () => {cancelled = true};
+
+      return () => { cancelled = true };
     }
+  }, [meError, meErrorObj, refresh, refetch, dispatch]);
 
-  },[meError, meErrorObj, refresh, refetch, dispatch])
-
-      
 
   return(
     <Suspense fallback={<Spinner />}>
@@ -76,9 +83,8 @@ function App() {
           {/* <Route path='/username' element={<UsernameModal />} /> */}
         </Route>
         <Route path="/" element={<Home />} />
-        <Route path='/username' element={<UsernameModal />} />
-        <Route path='/register' element={<RegisterModal />} />
-        <Route path='/login' element={<LoginModal />} />
+        {!isAuth && <Route path='/register' element={<RegisterModal />} />}
+        {!isAuth && <Route path='/login' element={<LoginModal />} />}
       </Routes>
       </BrowserRouter>
     </Suspense>
