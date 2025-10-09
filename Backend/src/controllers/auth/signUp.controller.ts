@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { signupService, usernameService } from "../services/signUp.service";
-import { AppError } from "../utils/AppError";
-import { setAuthCookies } from "../helpers/setAuthCookies";
+import { signupService, usernameService } from "../../services/auth/signUp.service";
+import { AppError } from "../../utils/AppError";
+import { setAuthCookies } from "../../helpers/setAuthCookies";
+
 
 export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
 

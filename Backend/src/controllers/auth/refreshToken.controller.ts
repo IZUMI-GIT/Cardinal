@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { refreshService } from "../services/refresh.service";
-import { AppError } from "../utils/AppError";
-import { setAuthCookies } from "../helpers/setAuthCookies";
+import { AppError } from "../../utils/AppError";
+import { refreshService } from "../../services/auth/refresh.service";
+import { setAuthCookies } from "../../helpers/setAuthCookies";
+
 
 export const postRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     

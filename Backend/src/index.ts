@@ -1,10 +1,10 @@
 import express from 'express';
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import boardRouter from './routes/board.routes';
 import { errorHandler } from './middlewares/errorHandling.middleware';
 import authRouter from './routes/auth.routes';
 import { authMiddleware } from './middlewares/auth.middleware';
+import boardRouter from './routes/board.routes';
 
 
 const app = express();
@@ -17,8 +17,10 @@ app.use(cors({
     origin : "http://localhost:5173"
 }))
 
+app.use(errorHandler);
+
 app.use('/v1', authRouter)
-app.use('/v1/board',authMiddleware, boardRouter)
+app.use('/v1/board', authMiddleware, boardRouter)
 
 // app.get('/', (req,res) => {
 //     console.log("Working")
