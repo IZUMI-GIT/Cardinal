@@ -38,8 +38,8 @@ model User {
 
 model Board {
   id Int @id @default(autoincrement())
-  title String 
-  columns Column[]
+  title String
+  lists List[]
   position Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -64,7 +64,7 @@ model Board_User {
   @@unique([userId, boardId])
 }
 
-model Column {
+model List {
   id Int @id @default(autoincrement())
   title String
   board Board @relation(fields: [boardId], references: [id])
@@ -80,14 +80,14 @@ model Column {
 model Card {
   id Int @id @default(autoincrement())
   content String
-  column Column @relation(fields: [columnId], references: [id])
-  columnId Int
+  lists List @relation(fields: [listId], references: [id])
+  listId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   position Int
   deletedAt DateTime?
   
-  @@index([columnId, position])
+  @@index([listId, position])
 }
 
 model Session {

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { signupService } from "../services/signUp.service";
-import { AppError } from "../utils/AppError";
-import { setAuthCookies } from "../helpers/setAuthCookies";
 import * as z from "zod";
+import { AppError } from "../../utils/AppError";
+import { signupService } from "../../services/auth/signUp.service";
+import { setAuthCookies } from "../../helpers/setAuthCookies";
 
 
 const signupSchema = z.object({
