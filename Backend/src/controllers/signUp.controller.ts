@@ -1,40 +1,54 @@
 import { NextFunction, Request, Response } from "express";
-import { signupService, usernameService } from "../services/signUp.service";
+import { signupService } from "../services/signUp.service";
 import { AppError } from "../utils/AppError";
 import { setAuthCookies } from "../helpers/setAuthCookies";
+import * as z from "zod";
+
+
+const signupSchema = z.object({
+    email : z.email(),
+    password : z.string().min(6),
+    name : z.string(),
+    username : z.string()
+})
 
 export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
 
     try{
-        const {name, email, password, username} : {
-        name : string,
-        email : string,
-        password : string,
-        username : string
-    } = req.body;
-    
-    const userAgent: string = req.headers['user-agent']!;
-    const userIP: string = req.ip!;
-
-    const details = {
-        name,
-        email,
-        password,
-        username,
-        userAgent,
-        userIP
-    }
+        const parsed = signupSchema.safeParse(req.body);
+        if(!parsed.data){
+            return next(new AppError(`Validation Error: ${z.treeifyError(parsed.error)}`, 400,))
+        }
+        
+        const {name, email, password, username} = parsed.data;
+        
+        const userAgent = req.headers['user-agent'] ?? "unknown";
+        const userIP = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip || "0.0.0.0";
 
 
-    const signupResponse = await signupService(details);
+        const details = {
+            name,
+            email,
+            password,
+            username,
+            userAgent,
+            userIP
+        }
 
-    if(!signupResponse){
-            return next(new AppError("Sign-In service failed to respond", 501))
-    }
+        const signupResponse = await signupService(details);
+        const { access_token, refresh_token, message, user } = signupResponse;
 
-    if(signupResponse.statusCode !== 201){
-        return next(new AppError(signupResponse.message, signupResponse.statusCode))
-    }
+        if(!access_token || !refresh_token){
+            return next(new AppError("token generation failed", 500))
+        }
+        
+        const tokens = {
+            access_token,
+            refresh_token
+        }
+
+        await setAuthCookies(res, tokens)
+        return res.status(200).json({ message, access_token, user });
 
         // Assuming the token and user are returned in the response
         // const { access_token, refresh_token, statusCode, message, user } = signupResponse;
@@ -52,45 +66,8 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
         //     secure: process.env.NODE_ENV === 'production',
         //     maxAge : 7*24*60*60*1000    //7 days
         // } )
-        
-
-        const { access_token, refresh_token, message, user } = signupResponse;
-        
-            if(!access_token || !refresh_token){
-                return next(new AppError("token missing", 500))
-            }
-            
-            const tokens = {
-                access_token,
-                refresh_token
-            }
-    
-            await setAuthCookies(res, tokens)
-            return res.status(200).json({ message, access_token, user });
-        }
-    catch{
-            return next(new AppError("Not signedup", 500))
-        }
-}
-
-
-export const getUsername = async (req: Request, res: Response, next: NextFunction) => {
-
-    try{
-        const username: string = req.params.username;
-
-        const usernameResponse = await usernameService(username);
-
-        // if(usernameResponse.statusCode !== 204){
-        //     return next( new AppError(usernameResponse.message, usernameResponse.statusCode))
-        // }
-
-        return res.status(usernameResponse.statusCode).json({
-            message : usernameResponse.message,
-            exists: usernameResponse.exists
-        })
-    }catch{
-        return next(new AppError("Username internal error", 500))
-
+    }
+    catch(err: any){
+        return next(err instanceof AppError ? err : new AppError(err?.message ?? "Signup failed", err?.statusCode ?? 500));    
     }
 }
