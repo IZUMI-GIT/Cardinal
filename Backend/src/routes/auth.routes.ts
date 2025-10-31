@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getUsername, postSignup } from "../controllers/signUp.controller";
-
-import { postRefreshToken } from "../controllers/refreshToken.controller";
-import { postSignIn } from "../controllers/signIn.controller";
-import { postLogout } from "../controllers/logOut.controller";
+import { postSignup } from "../controllers/auth/signUp.controller";
+import { postRefreshToken } from "../controllers/auth/refreshToken.controller";
+import { postSignIn } from "../controllers/auth/signIn.controller";
+import { postLogout } from "../controllers/auth/logOut.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { PrismaClient } from "@prisma/client";
+import { getUsername } from "../controllers/auth/username.controller";
 const prisma = new PrismaClient();
 const router = Router({mergeParams: true});
 

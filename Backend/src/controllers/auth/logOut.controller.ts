@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { logoutService } from "../services/logout.service";
-import { AppError } from "../utils/AppError";
+import { logoutService } from "../../services/auth/logout.service";
+import { AppError } from "../../utils/AppError";
 
 export const postLogout = async (req: Request, res: Response, next : NextFunction) => {
 

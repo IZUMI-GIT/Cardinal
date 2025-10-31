@@ -22,8 +22,8 @@ export const setAuthCookies = async (res: Response, tokens: {access_token: strin
             maxAge : 7*24*60*60*1000    //7 days
         })
 
-        return
+        return 
     }catch{
-        throw new AppError('Failed to set auth cookies', 500)
+        throw new Error("cookies not set")
     }
 }

@@ -2,8 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import * as z from "zod";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { config } from "../config/config";
 import {v4 as uuidv4} from 'uuid';
+import { config } from "../../config/config";
 const prisma = new PrismaClient();
 
 const SECRET_KEY = config.SECRET_KEY;
