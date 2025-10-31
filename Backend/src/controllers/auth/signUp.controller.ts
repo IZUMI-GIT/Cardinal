@@ -67,7 +67,8 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
         //     maxAge : 7*24*60*60*1000    //7 days
         // } )
     }
-    catch(err: any){
-        return next(err instanceof AppError ? err : new AppError(err?.message ?? "Signup failed", err?.statusCode ?? 500));    
+    catch(err){
+        // return next(err instanceof AppError ? err : new AppError(err?.message ?? "Signup failed", err?.statusCode ?? 500));    
+        return next(err)
     }
 }
