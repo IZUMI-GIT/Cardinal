@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 
 export const getBoardService = async (userId: number) => {
 
+    console.log(userId)
     try{
         const boards = await prisma.board.findMany({
             where: {
