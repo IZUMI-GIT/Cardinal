@@ -6,7 +6,7 @@ export const getBoardService = async (userId: number) => {
     try{
         const boards = await prisma.board.findMany({
             where: {
-                createdBy: userId
+                // createdBy: userId
             }
         })
         
