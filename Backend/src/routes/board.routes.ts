@@ -9,8 +9,8 @@ router.use(authMiddleware)
 
 router.get("/", getAllBoards);
 router.get("/:boardId", getBoard);
-router.post("/", postBoard);
-router.patch("/boardId", patchBoard);
-router.delete("/:boardId", deleteBoard);
+// router.post("/", postBoard);
+// router.patch("/boardId", patchBoard);
+// router.delete("/:boardId", deleteBoard);
 
 export default router;
