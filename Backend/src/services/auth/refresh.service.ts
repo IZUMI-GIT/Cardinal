@@ -51,7 +51,7 @@ export const refreshService = async (token : string, userAgent : string) => {
                         userId: response.userId,
                         refreshToken: refresh_token,
                         userAgent: userAgent,
-                        // expiredAt: d
+                        expiredAt: d
                     }
                 })
             ])

@@ -61,7 +61,7 @@ export const signInService = async ({email, password, userAgent, userIP}: SignIn
                             userId: emailCheck.id,
                             refreshToken,
                             userAgent,
-                            // expiredAt: d,
+                            expiredAt: d,
                             ipAddress: userIP
                         }
                     })
