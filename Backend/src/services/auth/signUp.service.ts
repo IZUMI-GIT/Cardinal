@@ -64,7 +64,7 @@ export const signupService = async (details: SignUp)  => {
             userId: newUser.id,
             refreshToken: hashedRefreshToken,
             userAgent: details.userAgent,
-            // expiredAt: expiryDate,
+            expiredAt: expiryDate,
             ipAddress: details.userIP
         }
     })
