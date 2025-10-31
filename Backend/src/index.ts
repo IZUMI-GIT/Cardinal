@@ -7,6 +7,7 @@ import { authMiddleware } from './middlewares/auth.middleware';
 import boardRouter from './routes/board.routes';
 
 
+
 const app = express();
 const port = 3000;
 

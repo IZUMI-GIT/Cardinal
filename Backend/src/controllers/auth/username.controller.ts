@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { usernameService } from "../services/username.service";
-import { AppError } from "../utils/AppError";
+import { usernameService } from "../../services/auth/username.service";
+import { AppError } from "../../utils/AppError";
 
 export const getUsername = async (req: Request, res: Response, next: NextFunction) => {
 
