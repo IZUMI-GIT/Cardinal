@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { config } from '../../config/config';
 import { v4 as uuidv4 } from 'uuid';
-
-const prisma = new PrismaClient();
+import { AppError } from "../../utils/AppError";
+import prisma from "../../lib/prisma";
+import crypto from "crypto";
 
 interface SignUp {
     name: string,
@@ -23,16 +23,17 @@ export const signupService = async (details: SignUp)  => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(details.password, salt);
 
-    const refreshToken = uuidv4();
-    const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+    const refreshToken = crypto.randomBytes(40).toString('hex');
+    const hashedRefreshToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
 
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 7);
 
-    const result = await prisma.$transaction(async (tx) => {
+    try{
+        const result = await prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
             data: {
-                email : details.email.toLowerCase(),
+                email : details.email.trim().toLowerCase(),
                 hashedPassword,
                 name : details.name,
                 userName : details.username   
@@ -60,25 +61,34 @@ export const signupService = async (details: SignUp)  => {
         )
 
         await tx.session.create({
-        data: {
-            userId: newUser.id,
-            refreshToken: hashedRefreshToken,
-            userAgent: details.userAgent,
-            expiredAt: expiryDate,
-            ipAddress: details.userIP
-        }
-    })
+            data: {
+                userId: newUser.id,
+                refreshToken: hashedRefreshToken,
+                userAgent: details.userAgent,
+                expiredAt: expiryDate,
+                ipAddress: details.userIP
+            }
+        })
+    
 
-    return { newUser, accessToken }
+        return { newUser, accessToken }
 
-    })
+        })
 
     
-    return {
-        message: "user created successfully",
-        user: result.newUser,
-        access_token: result.accessToken,
-        refresh_token: refreshToken
+        return {
+            message: "user created successfully",
+            user: result.newUser,
+            access_token: result.accessToken,
+            refresh_token: refreshToken
+        }
+    }catch(err: unknown){
+        const maybePrisma = err as { code?: string, meta?: { target?: string[] } };
+        if(maybePrisma.code === 'P2002' && maybePrisma.meta?.target?.includes('email')){
+            throw new AppError('Email already in use', 409);
+        }
+
+        throw new AppError('Internal Server Error', 500);
     }
 
     /**JWT token assignment in SignIn controller/service file

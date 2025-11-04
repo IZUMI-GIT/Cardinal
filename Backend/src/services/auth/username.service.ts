@@ -18,7 +18,6 @@ export const usernameService = async ( username: string) => {
     try{
         const newUsername = await prisma.user.findUnique({
             where: {
-
                 userName : username
             }
         })
