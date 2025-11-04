@@ -4,7 +4,6 @@ import { AppError } from "../../utils/AppError";
 import { signupService } from "../../services/auth/signUp.service";
 import { setAuthCookies } from "../../helpers/setAuthCookies";
 
-
 const signupSchema = z.object({
     email : z.email(),
     password : z.string().min(6),
@@ -16,19 +15,19 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
 
     try{
         const parsed = signupSchema.safeParse(req.body);
-        if(!parsed.data){
+        if(!parsed.success){
             return next(new AppError(`Validation Error: ${z.treeifyError(parsed.error)}`, 400,))
         }
         
         const {name, email, password, username} = parsed.data;
+        const normalizedEmail = String(email).trim().toLowerCase();
         
         const userAgent = req.headers['user-agent'] ?? "unknown";
         const userIP = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip || "0.0.0.0";
 
-
         const details = {
             name,
-            email,
+            email: normalizedEmail,
             password,
             username,
             userAgent,
@@ -48,7 +47,8 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
         }
 
         await setAuthCookies(res, tokens)
-        return res.status(200).json({ message, access_token, user });
+        res.setHeader('Location', `/users/${user.id}`);
+        return res.status(201).json({ message, access_token, user });
 
         // Assuming the token and user are returned in the response
         // const { access_token, refresh_token, statusCode, message, user } = signupResponse;
