@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-import * as z from "zod";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {v4 as uuidv4} from 'uuid';
 import { config } from "../../config/config";
 import prisma from "../../lib/prisma";
+import { AppError } from "../../utils/AppError";
+import crypto from "crypto";
 
 const SECRET_KEY = config.SECRET_KEY;
 // const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET;
@@ -18,36 +17,48 @@ interface SignIn {
 
 export const signInService = async ({email, password, userAgent, userIP}: SignIn) => {
 
-    const emailCheck = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: {
             email
+        },
+        select: {
+            id: true,
+            email: true,
+            name: true,
+            userName: true,
+            role: true,
+            hashedPassword: true
         }
     })
 
-    if(!emailCheck){
-        return {statusCode: 401, message: "invalid username or password"}
+    if(!user){
+        throw new AppError("Invalid credentials", 401);
     }else{
         try{
-            const hashPassword = emailCheck.hashedPassword;
+            const hashPassword = user.hashedPassword;
             const hashVerify = await bcrypt.compare(password, hashPassword);
             // console.log("hashverify :", hashVerify)
-            if(hashVerify){
+            if(!hashVerify){
+                throw new AppError("Invalid credentials", 401);
+            }else{
                 const jwToken = jwt.sign({
                     email,
-                    role : emailCheck.role,
-                    id : emailCheck.id
-                    }, SECRET_KEY as string
+                    role : user.role,
+                    id : user.id
+                    }, SECRET_KEY as string,
+                    { expiresIn: "15m" }
                 )
 
-                const refreshToken = uuidv4();
+                const refreshToken = crypto.randomBytes(40).toString('hex');
+                const hashRefreshToken = crypto.createHash('sha256').update(refreshToken).digest('hex')
                 const d = new Date();
                 d.setDate(d.getDate() + 7)
 
                 // const response = 
                 await prisma.session.create({
                     data: {
-                        userId: emailCheck.id,
-                        refreshToken,
+                        userId: user.id,
+                        refreshToken: hashRefreshToken,
                         userAgent,
                         expiredAt: d,
                         ipAddress: userIP
@@ -58,23 +69,27 @@ export const signInService = async ({email, password, userAgent, userIP}: SignIn
 
                 // const refreshToken = jwt.sign({
                 //     email,
-                //     role : emailCheck.role,
-                //     id : emailCheck.id
+                //     role : user.role,
+                //     id : user.id
                 //     }, REFRESH_TOKEN_SECRET as string
                 // )
 
+                const userDto = {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    userName: user.userName,
+                    role: user.role,
+                };
+
                 return {
-                    statusCode: 200,
-                    message: "User logged in successfully",
                     access_token : jwToken,
                     refresh_token : refreshToken,
-                    user: emailCheck
+                    user: userDto,
                 }
-            }else{
-                return {statusCode: 400, message: "enter correct credentials"}
             }
-        }catch{
-            return {statusCode: 500, message: "SignIn Internal Error"}
+        }catch(err){
+            throw new AppError("Sign-In failed", 500);
         }
     }
 }
