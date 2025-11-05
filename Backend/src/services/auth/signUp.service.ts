@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { config } from '../../config/config';
-import { v4 as uuidv4 } from 'uuid';
 import { AppError } from "../../utils/AppError";
 import prisma from "../../lib/prisma";
 import crypto from "crypto";
@@ -31,44 +30,44 @@ export const signupService = async (details: SignUp)  => {
 
     try{
         const result = await prisma.$transaction(async (tx) => {
-        const newUser = await tx.user.create({
-            data: {
-                email : details.email.trim().toLowerCase(),
-                hashedPassword,
-                name : details.name,
-                userName : details.username   
-            },
-            select:{
-                id: true,
-                email: true,
-                name: true,
-                userName: true,
-                role: true,
-                createdAt: true,
-                updatedAt: true
-            }
-        })
+            const newUser = await tx.user.create({
+                data: {
+                    email : details.email.trim().toLowerCase(),
+                    hashedPassword,
+                    name : details.name,
+                    userName : details.username   
+                },
+                select:{
+                    id: true,
+                    email: true,
+                    name: true,
+                    userName: true,
+                    role: true,
+                    createdAt: true,
+                    updatedAt: true
+                }
+            })
 
-        
-        const accessToken = jwt.sign(
-            {
-            email: newUser.email,
-            role: newUser.role,
-            id: newUser.id
-            }, 
-            SECRET_KEY,
-            { expiresIn: "15m"}
-        )
+            
+            const accessToken = jwt.sign(
+                {
+                email: newUser.email,
+                role: newUser.role,
+                id: newUser.id
+                }, 
+                SECRET_KEY,
+                { expiresIn: "15m"}
+            )
 
-        await tx.session.create({
-            data: {
-                userId: newUser.id,
-                refreshToken: hashedRefreshToken,
-                userAgent: details.userAgent,
-                expiredAt: expiryDate,
-                ipAddress: details.userIP
-            }
-        })
+            await tx.session.create({
+                data: {
+                    userId: newUser.id,
+                    refreshToken: hashedRefreshToken,
+                    userAgent: details.userAgent,
+                    expiredAt: expiryDate,
+                    ipAddress: details.userIP
+                }
+            })
     
 
         return { newUser, accessToken }
@@ -82,6 +81,7 @@ export const signupService = async (details: SignUp)  => {
             access_token: result.accessToken,
             refresh_token: refreshToken
         }
+        
     }catch(err: unknown){
         const maybePrisma = err as { code?: string, meta?: { target?: string[] } };
         if(maybePrisma.code === 'P2002' && maybePrisma.meta?.target?.includes('email')){

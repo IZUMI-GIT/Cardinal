@@ -2,19 +2,38 @@ import { NextFunction, Request, Response } from "express";
 import { signInService } from "../../services/auth/signIn.service";
 import { AppError } from "../../utils/AppError";
 import { setAuthCookies } from "../../helpers/setAuthCookies";
+import z from "zod";
+
+const signInSchema =  z.object({
+    email: z.email(),
+    password: z.string().min(8)
+})
 
 
 export const postSignIn = async (req: Request, res: Response, next: NextFunction) => {
     try{
-        const {email, password}:{
-            email: string,
-            password: string
-        } = req.body;
+        const signinParsed = signInSchema.safeParse(req.body);
+        if(!signinParsed.success){
+            return next(new AppError(`Validation error: ${z.treeifyError(signinParsed.error)}`, 400))
+        }
 
-        const userAgent: string = req.headers['user-agent']!;
-        const userIP: string = req.ip!;
+        const {email, password} = signinParsed.data;
+
+        const userAgent: string = req.headers['user-agent'] || "user-agent-unknown";
+        let userIP: string;
+        const ipForwarded =  req.headers['x-forwarded-for']
+        if(typeof ipForwarded === 'string'){
+            userIP = ipForwarded.split(',')[0].trim();
+        }else if(Array.isArray(ipForwarded)){
+            userIP = ipForwarded[0];
+        }else{
+            userIP = req.socket.remoteAddress || 'undefined';
+        }
+        // const userIP: string = (req.headers['x-forwarded-for'] as string).split(',')[0] || req.socket.remoteAddress || "0.0.0.0";
+
+        const normalizedEmail = String(email).trim().toLowerCase();
         const details = {
-            email,
+            email: normalizedEmail,
             password,
             userAgent,
             userIP

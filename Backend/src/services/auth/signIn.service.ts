@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {v4 as uuidv4} from 'uuid';
 import { config } from "../../config/config";
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma";
 
 const SECRET_KEY = config.SECRET_KEY;
 // const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET;
@@ -18,77 +18,63 @@ interface SignIn {
 
 export const signInService = async ({email, password, userAgent, userIP}: SignIn) => {
 
-    const loginSchema = z.object({
-        email: z.string(),
-        password: z.string().min(6)
+    const emailCheck = await prisma.user.findUnique({
+        where: {
+            email
+        }
     })
 
-    const zodResult = loginSchema.safeParse({email, password});
-    // console.log("zodResult :", zodResult)
-
-    if(!zodResult.success){
-        return {statusCode: 400, message : "enter details correctly"}
+    if(!emailCheck){
+        return {statusCode: 401, message: "invalid username or password"}
     }else{
-        const emailCheck = await prisma.user.findUnique({
-            where: {
-                email
-            }
-        })
-        // console.log("emailCheck :", emailCheck)
+        try{
+            const hashPassword = emailCheck.hashedPassword;
+            const hashVerify = await bcrypt.compare(password, hashPassword);
+            // console.log("hashverify :", hashVerify)
+            if(hashVerify){
+                const jwToken = jwt.sign({
+                    email,
+                    role : emailCheck.role,
+                    id : emailCheck.id
+                    }, SECRET_KEY as string
+                )
 
-        if(!emailCheck){
-            return {statusCode: 409, message: "user doesn't exist"}
-        }else{
-            try{
-                const hashPassword = emailCheck.hashedPassword;
-                const hashVerify = await bcrypt.compare(password, hashPassword);
-                // console.log("hashverify :", hashVerify)
-                if(hashVerify){
-                    const jwToken = jwt.sign({
-                        email,
-                        role : emailCheck.role,
-                        id : emailCheck.id
-                        }, SECRET_KEY as string
-                    )
+                const refreshToken = uuidv4();
+                const d = new Date();
+                d.setDate(d.getDate() + 7)
 
-                    const refreshToken = uuidv4();
-                    const d = new Date();
-                    d.setDate(d.getDate() + 7)
-
-                    // const response = 
-                    await prisma.session.create({
-                        data: {
-                            userId: emailCheck.id,
-                            refreshToken,
-                            userAgent,
-                            expiredAt: d,
-                            ipAddress: userIP
-                        }
-                    })
-
-                    // console.log("uuid: ", response)
-
-                    // const refreshToken = jwt.sign({
-                    //     email,
-                    //     role : emailCheck.role,
-                    //     id : emailCheck.id
-                    //     }, REFRESH_TOKEN_SECRET as string
-                    // )
-
-                    return {
-                        statusCode: 200,
-                        message: "User logged in successfully",
-                        access_token : jwToken,
-                        refresh_token : refreshToken,
-                        user: emailCheck
+                // const response = 
+                await prisma.session.create({
+                    data: {
+                        userId: emailCheck.id,
+                        refreshToken,
+                        userAgent,
+                        expiredAt: d,
+                        ipAddress: userIP
                     }
-                }else{
-                    return {statusCode: 400, message: "enter correct credentials"}
-                }
-            }catch{
-                return {statusCode: 500, message: "SignIn Internal Error"}
-            }
-        }
+                })
 
+                // console.log("uuid: ", response)
+
+                // const refreshToken = jwt.sign({
+                //     email,
+                //     role : emailCheck.role,
+                //     id : emailCheck.id
+                //     }, REFRESH_TOKEN_SECRET as string
+                // )
+
+                return {
+                    statusCode: 200,
+                    message: "User logged in successfully",
+                    access_token : jwToken,
+                    refresh_token : refreshToken,
+                    user: emailCheck
+                }
+            }else{
+                return {statusCode: 400, message: "enter correct credentials"}
+            }
+        }catch{
+            return {statusCode: 500, message: "SignIn Internal Error"}
+        }
     }
 }
