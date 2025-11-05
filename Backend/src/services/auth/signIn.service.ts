@@ -4,6 +4,7 @@ import { config } from "../../config/config";
 import prisma from "../../lib/prisma";
 import { AppError } from "../../utils/AppError";
 import crypto from "crypto";
+import { string } from 'zod';
 
 const SECRET_KEY = config.SECRET_KEY;
 // const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET;
@@ -89,7 +90,7 @@ export const signInService = async ({email, password, userAgent, userIP}: SignIn
                 }
             }
         }catch(err){
-            throw new AppError("Sign-In failed", 500);
+            throw new AppError(err as string, 500);
         }
     }
 }
