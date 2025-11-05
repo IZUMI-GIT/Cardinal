@@ -14,12 +14,12 @@ const signupSchema = z.object({
 export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
 
     try{
-        const signupParsed = signupSchema.safeParse(req.body);
-        if(!signupParsed.success){
-            return next(new AppError(`Validation Error: ${z.treeifyError(signupParsed.error)}`, 400,))
+        const parsed = signupSchema.safeParse(req.body);
+        if(!parsed.success){
+            return next(new AppError(`Validation Error: ${z.treeifyError(parsed.error)}`, 400,))
         }
         
-        const {name, email, password, username} = signupParsed.data;
+        const {name, email, password, username} = parsed.data;
         const normalizedEmail = String(email).trim().toLowerCase();
         
         const userAgent = req.headers['user-agent'] ?? "unknown";
