@@ -23,8 +23,16 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
         const normalizedEmail = String(email).trim().toLowerCase();
         
         const userAgent = req.headers['user-agent'] ?? "unknown";
-        const userIP = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip || "0.0.0.0";
-
+        let userIP: string
+        const ipForwarded = req.headers['x-forwarded-for'];
+        if(typeof ipForwarded === 'string'){
+            userIP = ipForwarded.split(',')[0].trim();
+        }else if(Array.isArray(ipForwarded)){
+            userIP = ipForwarded[0]
+        }else{
+            userIP = req.socket.remoteAddress || 'undefined';
+        }
+        
         const details = {
             name,
             email: normalizedEmail,

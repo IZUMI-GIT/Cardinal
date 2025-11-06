@@ -73,7 +73,6 @@ export const signupService = async (details: SignUp)  => {
         return { newUser, accessToken }
 
         })
-
     
         return {
             message: "user created successfully",
