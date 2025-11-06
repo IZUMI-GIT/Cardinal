@@ -1,10 +1,10 @@
 // import jwt, { JwtPayload } from 'jsonwebtoken';
-import { config } from "../../config/config";
+// import { config } from "../../config/config";
 import prisma from '../../lib/prisma';
 import crypto from "crypto";
 import { AppError } from '../../utils/AppError';
 
-const SECRET_KEY = config.SECRET_KEY;
+// const SECRET_KEY = config.SECRET_KEY;
 
 export const logoutService = async (accessToken: string, refreshToken: string) => {
 
