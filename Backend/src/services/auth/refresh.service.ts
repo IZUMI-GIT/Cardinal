@@ -1,69 +1,62 @@
-import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/config";
 import {v4 as uuidv4} from 'uuid';
-
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma";
+import { AppError } from "../../utils/AppError";
+import crypto from "crypto"
 
 const SECRET_KEY = config.SECRET_KEY;
-// const REFRESH_TOKEN_SECRET = config.REFRESH_TOKEN_SECRET
 
-export const refreshService = async (token : string, userAgent : string) => {
+export const refreshService = async (token: string, userAgent: string, userIP: string) => {
 
-    // console.log("token:", token)
-    if(!SECRET_KEY){
-        return {statusCode: 401, message: "Key corrupted"};
-    }
-
-    // const response = jwt.verify(token, REFRESH_TOKEN_SECRET) as JwtPayload;
-
+    const hashed: string = crypto.createHash('sha256').update(token).digest('hex');
     const response = await prisma.session.findUnique({
         where: {
-            refreshToken : token
+            refreshToken: hashed
         }
     })
 
     if(!response){
-        return {statusCode: 401, message: "session timed out"};
+        throw new AppError("no session recorded", 401)
     }else{
-        // console.log(response);
-
         try{
-            const jwToken = jwt.sign(response, SECRET_KEY as string);
-            // const refresh_token = jwt.sign(response, REFRESH_TOKEN_SECRET);
-            const refresh_token = uuidv4()
+            const accessToken = jwt.sign(response, SECRET_KEY as string);
+            const refreshToken = crypto.randomBytes(40).toString('hex');
+            const hashedRefreshToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
 
-            const d = new Date();
-            d.setDate(d.getDate() + 7)
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 7);
 
-            await prisma.$transaction([
-                prisma.session.update({
-                    where:{
-                        refreshToken: token
+            await prisma.$transaction(async (tx) => {
+                await tx.session.update({
+                    where: {
+                        refreshToken: hashed
                     },
                     data: {
                         valid: false
                     }
-                }),
-                
-                prisma.session.create({
-                    data:{
+                })
+
+                await tx.session.create({
+                    data: {
                         userId: response.userId,
-                        refreshToken: refresh_token,
+                        refreshToken: hashedRefreshToken,
                         userAgent: userAgent,
-                        expiredAt: d
+                        ipAddress: userIP,
+                        expiredAt: expiryDate
                     }
                 })
-            ])
+
+            })
 
             return {
-                statusCode : 200,
-                message : "tokens are created",
-                access_token : jwToken,
-                refresh_token : refresh_token
+                message: "session created",
+                userId: response.userId,
+                accessToken,
+                refreshToken
             }
-        }catch{
-            return {statusCode : 501, message : "tokens not implemented"}
+        }catch(err){
+            throw new AppError(`: ${err}`, 501)
         }
     }
 }
