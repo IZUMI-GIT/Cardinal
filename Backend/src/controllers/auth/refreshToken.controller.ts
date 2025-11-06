@@ -9,7 +9,7 @@ export const postRefreshToken = async (req: Request, res: Response, next: NextFu
     try{
         const refresh_Token: string = req.cookies.refreshToken;
         //fetch user-Agent => not implemented
-        let userAgent: string =  req.headers["user-agent"] ?? "unknown"
+        const userAgent: string =  req.headers["user-agent"] ?? "unknown"
         let userIP: string;
         const ipForwarded = req.headers['x-forwarded-for'];
 
@@ -41,8 +41,8 @@ export const postRefreshToken = async (req: Request, res: Response, next: NextFu
         }
 
         await setAuthCookies(res, tokens)
-        // res.setHeader('Location', `/users/${user.id}`);
-        // return res.status(201).json({ message, access_token, user });
+        res.setHeader('Location', `/users/${userId}`);
+        return res.status(201).json({ message, userId });
     }catch(err){
         return next(err)
     }
