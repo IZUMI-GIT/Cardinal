@@ -1,44 +1,41 @@
-import { PrismaClient } from "@prisma/client"
-import jwt from 'jsonwebtoken';
-import { config } from "../../config/config";
+// import jwt, { JwtPayload } from 'jsonwebtoken';
+// import { config } from "../../config/config";
+import prisma from '../../lib/prisma';
+import crypto from "crypto";
+import { AppError } from '../../utils/AppError';
 
-const primsa = new PrismaClient();
-
-const SECRET_KEY = config.SECRET_KEY;
+// const SECRET_KEY = config.SECRET_KEY;
 
 export const logoutService = async (accessToken: string, refreshToken: string) => {
 
-    if(!accessToken || !refreshToken){
-        return {statusCode : 401, message: "No cookies found"}
-    }
-
-    try{
-        const response = await primsa.session.findUnique({
+    try {
+        const hashed = crypto.createHash('sha256').update(refreshToken).digest('hex');
+        const response = await prisma.session.findUnique({
             where: {
-                refreshToken
+                refreshToken: hashed
             }
         })
 
-        const jwtResponse = jwt.verify(accessToken, SECRET_KEY);
-
-        if(!response?.valid && !jwtResponse){
-            return {statusCode: 401, message: "session timed out"}
+        if(!response){
+            throw new AppError("Invalid credentials", 401)
         }
 
+        // const jwtResponse = jwt.verify(accessToken, SECRET_KEY) as JwtPayload;
         // const sessionRefreshResponse = 
-        await primsa.session.update({
+        await prisma.session.update({
             where: {
-                refreshToken: refreshToken
+                refreshToken: hashed
             }, 
             data : {
                 valid : false
             }
         })
         // console.log("sessionRefreshResponse:", sessionRefreshResponse)
-        return {statusCode: 200, message: "session updated"}
-    }catch{
+        return {
+            message: "session logged out"
+        }
+    }catch(err){
         // console.log(e)
-        return {statusCode: 500, message: "token internal error"}
+        throw new AppError((err as string), 500)
     }
-
 }
