@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+// import jwt, { JwtPayload } from 'jsonwebtoken';
 import { config } from "../../config/config";
 import prisma from '../../lib/prisma';
 import crypto from "crypto";
@@ -20,7 +20,7 @@ export const logoutService = async (accessToken: string, refreshToken: string) =
             throw new AppError("Invalid credentials", 401)
         }
 
-        const jwtResponse = jwt.verify(accessToken, SECRET_KEY) as JwtPayload;
+        // const jwtResponse = jwt.verify(accessToken, SECRET_KEY) as JwtPayload;
         // const sessionRefreshResponse = 
         await prisma.session.update({
             where: {
