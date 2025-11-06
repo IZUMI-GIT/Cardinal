@@ -1,32 +1,35 @@
-import { PrismaClient } from "@prisma/client"
 import jwt from 'jsonwebtoken';
 import { config } from "../../config/config";
-
-const primsa = new PrismaClient();
+import prisma from '../../lib/prisma';
+import crypto from "crypto";
+import { AppError } from '../../utils/AppError';
 
 const SECRET_KEY = config.SECRET_KEY;
 
 export const logoutService = async (accessToken: string, refreshToken: string) => {
 
-    if(!accessToken || !refreshToken){
-        return {statusCode : 401, message: "No cookies found"}
-    }
-
-    try{
-        const response = await primsa.session.findUnique({
+    try {
+        const hashed = crypto.createHash('sha256').update(refreshToken).digest('hex');
+        const response = await prisma.session.findUnique({
             where: {
-                refreshToken
+                refreshToken: hashed
             }
         })
 
+        if(!response){
+            throw new AppError("Invalid credentials", 401)
+        }
+
         const jwtResponse = jwt.verify(accessToken, SECRET_KEY);
+        if(jwtResponse)
+    
 
         if(!response?.valid && !jwtResponse){
             return {statusCode: 401, message: "session timed out"}
         }
 
         // const sessionRefreshResponse = 
-        await primsa.session.update({
+        await prisma.session.update({
             where: {
                 refreshToken: refreshToken
             }, 

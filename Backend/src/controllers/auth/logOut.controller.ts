@@ -4,8 +4,12 @@ import { AppError } from "../../utils/AppError";
 
 export const postLogout = async (req: Request, res: Response, next : NextFunction) => {
 
-    const accessToken : string = req.cookies.accessToken;
-    const refreshToken : string = req.cookies.refreshToken;
+    const accessToken: string = req.cookies.accessToken;
+    const refreshToken: string = req.cookies.refreshToken;
+
+    if(!accessToken || !refreshToken){
+        return next(new AppError("tokens not available", 500))
+    }
 
     const logoutResponse = await logoutService(accessToken, refreshToken);
 
