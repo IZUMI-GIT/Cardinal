@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { config } from "../../config/config";
 import prisma from '../../lib/prisma';
 import crypto from "crypto";
@@ -20,28 +20,22 @@ export const logoutService = async (accessToken: string, refreshToken: string) =
             throw new AppError("Invalid credentials", 401)
         }
 
-        const jwtResponse = jwt.verify(accessToken, SECRET_KEY);
-        if(jwtResponse)
-    
-
-        if(!response?.valid && !jwtResponse){
-            return {statusCode: 401, message: "session timed out"}
-        }
-
+        const jwtResponse = jwt.verify(accessToken, SECRET_KEY) as JwtPayload;
         // const sessionRefreshResponse = 
         await prisma.session.update({
             where: {
-                refreshToken: refreshToken
+                refreshToken: hashed
             }, 
             data : {
                 valid : false
             }
         })
         // console.log("sessionRefreshResponse:", sessionRefreshResponse)
-        return {statusCode: 200, message: "session updated"}
-    }catch{
+        return {
+            message: "session logged out"
+        }
+    }catch(err){
         // console.log(e)
-        return {statusCode: 500, message: "token internal error"}
+        throw new AppError((err as string), 500)
     }
-
 }
